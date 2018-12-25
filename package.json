@@ -1,0 +1,14 @@
+{
+  "name": "logistic",
+  "version": "1.0.0",
+  "description": "Freight handling software",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^4.0.0"
+  }
+}
