@@ -1,0 +1,17 @@
+a#side-bar-button {
+    z-index: 1000;
+}
+
+#map {
+    height: 100%;
+    width: 100%;
+
+}
+.layout-container {
+    height: 100vh;
+    width: calc(100%);
+    padding-left: 300px;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+}

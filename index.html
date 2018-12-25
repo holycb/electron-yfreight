@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Materialize CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
+    />
+    <link rel="stylesheet" type="text/css" href="styles.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script
+      src="https://api-maps.yandex.ru/2.1/?apikey=1bc87f1e-1a9c-43a0-80ea-2635f4be4c63&lang=en_US"
+      type="text/javascript"
+    ></script>
+    <title>Document</title>
+  </head>
+  <body>
+    <a
+      class="waves-effect waves-teal btn-flat"
+      id="side-bar-button"
+      style="margin-top: 8.3px;"
+      >Open side bar</a
+    >
+    <ul id="slide-out" class="sidenav">
+      <li>
+        <div class="row">
+          <div class="col s4 offset-s8">
+            <a class="waves-effect waves-teal btn-flat">Settings</a>
+          </div>
+        </div>
+      </li>
+      <li><a class="waves-effect navigation-button" id="map-button">Map</a></li>
+      <li>
+        <a class="waves-effect navigation-button" id="dictionaries-button"
+          >Dictionaries</a
+        >
+      </li>
+      <li>
+        <a class="waves-effect navigation-button" id="senders-button"
+          >Senders</a
+        >
+      </li>
+      <li>
+        <a class="waves-effect navigation-button" id="consumers-button"
+          >Consumers</a
+        >
+      </li>
+
+      <li><div class="divider"></div></li>
+      <li><a class="subheader">History</a></li>
+      <li><a class="waves-effect" href="#!">Routes</a></li>
+      <li><a class="waves-effect" href="#!">Reports</a></li>
+    </ul>
+
+    <div class="layout-container"><div id="map"></div></div>
+  </body>
+  <script>
+    var sidebar;
+    var currentLayout;
+    var myMap;
+    var mapContainer;
+
+      
+
+    // Y API
+    ymaps.ready(() => {
+      ymaps.geolocation.get().then((res) => {
+        myMap = new ymaps.Map('map', {
+        center: res.geoObjects.position,
+        zoom: 10,
+        controls: ['searchControl', 'typeSelector', 'fullscreenControl', 'zoomControl', 'geolocationControl']
+      });
+      mapContainer = document.querySelector('#map');
+      });
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      var elems = document.querySelector('.sidenav');
+      sidebar = M.Sidenav.init(elems);
+    });
+
+    document.querySelector('#side-bar-button').addEventListener('click', () => {
+      if (sidebar.isOpen) sidebar.close();
+      else sidebar.open();
+    });
+
+    document.querySelectorAll('.navigation-button').forEach(element => {
+      element.addEventListener('click', el => {
+        let layout = el.target.id.replace('-button', '');
+        if (layout !== currentLayout) {
+          let layoutContainer = document.querySelector('.layout-container');
+
+          while (layoutContainer.firstChild) {
+            layoutContainer.removeChild(layoutContainer.firstChild);
+          }
+
+          var newLayout;
+          if (layout === 'map') {
+            newLayout = mapContainer;
+          } else {
+            newLayout = document.createElement('div');
+            newLayout.className = layout;
+          }
+
+          layoutContainer.appendChild(newLayout);
+        }
+      });
+    });
+
+  </script>
+</html>
