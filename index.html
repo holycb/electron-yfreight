@@ -7,11 +7,15 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
     />
     <link rel="stylesheet" type="text/css" href="styles.css" />
+    <script src="js/map.js"></script>
+    <script src="js/layout.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script
       src="https://api-maps.yandex.ru/2.1/?apikey=1bc87f1e-1a9c-43a0-80ea-2635f4be4c63&lang=en_US"
       type="text/javascript"
     ></script>
+    <meta charset="UTF-8"><meta>
+
     <title>Document</title>
   </head>
   <body>
@@ -52,60 +56,21 @@
       <li><a class="waves-effect" href="#!">Reports</a></li>
     </ul>
 
-    <div class="layout-container"><div id="map"></div></div>
+    
+    <div class="layout-container">
+      <div class="side-layout"><a
+        class="waves-effect waves-teal btn-flat"
+        id="side-bar-button-click"
+        style="margin-top: 38.3px;"
+      >Get distance 0 to 1</a
+      ></div>
+      <div class="main-layout"></div>
+    </div>
   </body>
+  <script src="js/init.js"></script>
   <script>
-    var sidebar;
-    var currentLayout;
-    var myMap;
-    var mapContainer;
-
-      
-
-    // Y API
-    ymaps.ready(() => {
-      ymaps.geolocation.get().then((res) => {
-        myMap = new ymaps.Map('map', {
-        center: res.geoObjects.position,
-        zoom: 10,
-        controls: ['searchControl', 'typeSelector', 'fullscreenControl', 'zoomControl', 'geolocationControl']
-      });
-      mapContainer = document.querySelector('#map');
-      });
+    document.querySelector('#side-bar-button-click').addEventListener('click', () => {
+      setBestWay();
     });
-
-    document.addEventListener('DOMContentLoaded', () => {
-      var elems = document.querySelector('.sidenav');
-      sidebar = M.Sidenav.init(elems);
-    });
-
-    document.querySelector('#side-bar-button').addEventListener('click', () => {
-      if (sidebar.isOpen) sidebar.close();
-      else sidebar.open();
-    });
-
-    document.querySelectorAll('.navigation-button').forEach(element => {
-      element.addEventListener('click', el => {
-        let layout = el.target.id.replace('-button', '');
-        if (layout !== currentLayout) {
-          let layoutContainer = document.querySelector('.layout-container');
-
-          while (layoutContainer.firstChild) {
-            layoutContainer.removeChild(layoutContainer.firstChild);
-          }
-
-          var newLayout;
-          if (layout === 'map') {
-            newLayout = mapContainer;
-          } else {
-            newLayout = document.createElement('div');
-            newLayout.className = layout;
-          }
-
-          layoutContainer.appendChild(newLayout);
-        }
-      });
-    });
-
   </script>
 </html>
