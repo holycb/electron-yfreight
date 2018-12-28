@@ -8,7 +8,10 @@ function init() {
    */
   multiRoute = new ymaps.multiRouter.MultiRoute(
     {
-      referencePoints: []
+      referencePoints: [],
+      params: {
+        reverseGeocoding: true,
+      }
     },
     {
       /**
@@ -68,19 +71,28 @@ function init() {
       }
     );
 
+
     // Adding multiroute to the map.
     myMap.geoObjects.add(multiRoute);
+
+    // Update side layout when click
+    myMap.events.add('click', () => {updateSideLayout(getNamePoints())});
+
   });
 }
 
-function getPoints() {
+function getCoordPoints() {
   return multiRoute.model.getAllPoints().map(x => x.getReferencePoint());
 }
 
+function getNamePoints() {
+  return multiRoute.model.getAllPoints().map(x => x.properties.get("name"));
+}
+
 function setBestWay() {
-  let points = getPoints();
-  console.log(points);
-  console.log(
-    ymaps.coordSystem.geo.getDistance(points[0], points[1])
-  );
+  // let points = getPoints();
+  // console.log(points);
+  // console.log(
+  //   ymaps.coordSystem.geo.getDistance(points[0], points[1])
+  // );
 }

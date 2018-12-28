@@ -42,6 +42,20 @@ function initButtons() {
   });
 }
 
+function updateSideLayout(list) {
+  let sideList = document.querySelector('.collection');
+  while(sideList.lastChild) {
+    sideList.removeChild(sideList.firstChild);
+  }
+
+  for (i in list) {
+    let newListItem = document.createElement('a');
+    newListItem.className = 'collection-item';
+    newListItem.innerText = list[i];
+    sideList.appendChild(newListItem);
+  }
+}
+
 function initSideNav() {
   document.addEventListener('DOMContentLoaded', () => {
     var elems = document.querySelector('.sidenav');
@@ -49,13 +63,8 @@ function initSideNav() {
   });
 }
 
-function setMapMenu() {
-  
-}
-
 function initialLayout() {
   initMap();
-  setMapMenu();
 }
 
 

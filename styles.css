@@ -19,6 +19,8 @@ a#side-bar-button {
 .side-layout {
   background-color: inherit;
   height: 100vh;
+  max-height: 100vh;
+  overflow-y: auto;
   width: 300px;
   position: absolute;
   top: 0;
