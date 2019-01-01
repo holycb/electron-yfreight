@@ -43,6 +43,9 @@ function initButtons() {
 }
 
 function updateSideLayout(list) {
+  const LIST_ITEM_CLASS = 'collection-item noselect';
+
+
   let sideList = document.querySelector('.collection');
   while(sideList.lastChild) {
     sideList.removeChild(sideList.firstChild);
@@ -50,7 +53,7 @@ function updateSideLayout(list) {
 
   for (i in list) {
     let newListItem = document.createElement('a');
-    newListItem.className = 'collection-item';
+    newListItem.className = LIST_ITEM_CLASS;
     newListItem.innerText = list[i];
     sideList.appendChild(newListItem);
   }

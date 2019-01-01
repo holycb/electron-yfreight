@@ -25,3 +25,7 @@ a#side-bar-button {
   position: absolute;
   top: 0;
 }
+
+.noselect {
+  user-select: none;
+}

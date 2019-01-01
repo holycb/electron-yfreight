@@ -25,7 +25,7 @@ function init() {
   );
 
   var buttonEditor = new ymaps.control.Button({
-    data: { content: 'Editing mode' }
+    data: { content: 'Создать маршрут' }
   });
 
   buttonEditor.events.add('select', () => {
@@ -75,9 +75,8 @@ function init() {
     // Adding multiroute to the map.
     myMap.geoObjects.add(multiRoute);
 
-    // Update side layout when click
-    myMap.events.add('click', () => {updateSideLayout(getNamePoints())});
-
+    // Update side layout when add new way point
+    multiRoute.model.events.add('requestsuccess', () => {updateSideLayout(getNamePoints())});
   });
 }
 
