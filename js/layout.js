@@ -46,7 +46,11 @@ function updateSideLayout(list) {
   const LIST_ITEM_CLASS = 'collection-item noselect';
 
 
-  let sideList = document.querySelector('.collection');
+  let sideList = document.querySelector('#side-list');
+  
+  if (list.length > 0) sideList.className = 'collection';
+  else sideList.className = '';
+
   while(sideList.lastChild) {
     sideList.removeChild(sideList.firstChild);
   }
