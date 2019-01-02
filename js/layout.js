@@ -22,7 +22,7 @@ function initButtons() {
     element.addEventListener('click', el => {
       let layout = el.target.id.replace('-button', '');
       if (layout !== currentLayout) {
-        let layoutContainer = document.querySelector('.layout-container');
+        let layoutContainer = document.querySelector('.main-layout');
   
         while (layoutContainer.firstChild) {
           layoutContainer.removeChild(layoutContainer.firstChild);

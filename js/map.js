@@ -10,7 +10,7 @@ function init() {
     {
       referencePoints: [],
       params: {
-        reverseGeocoding: true,
+        reverseGeocoding: true
       }
     },
     {
@@ -71,12 +71,13 @@ function init() {
       }
     );
 
-
     // Adding multiroute to the map.
     myMap.geoObjects.add(multiRoute);
 
     // Update side layout when add new way point
-    multiRoute.model.events.add('requestsuccess', () => {updateSideLayout(getNamePoints())});
+    multiRoute.model.events.add('requestsuccess', () => {
+      updateSideLayout(getNamePoints());
+    });
   });
 }
 
@@ -85,13 +86,30 @@ function getCoordPoints() {
 }
 
 function getNamePoints() {
-  return multiRoute.model.getAllPoints().map(x => x.properties.get("name"));
+  return multiRoute.model.getAllPoints().map(x => x.properties.get('name'));
 }
 
 function setBestWay() {
-  // let points = getPoints();
-  // console.log(points);
-  // console.log(
-  //   ymaps.coordSystem.geo.getDistance(points[0], points[1])
-  // );
+  const points = getCoordPoints();
+  let results = [];
+
+  // getting all the distances between each point
+  for (let i = 0; i < points.length - 1; i++) {
+    for (let j = i + 1; j < points.length; j++) {
+      ymaps.route([points[i], points[j]]).then(function(route) {
+        results.push({
+          start: points[i],
+          end: points[j],
+          distance: route.getLength()
+        });
+
+        //waiting for all the results...
+        if (results.length == ((points.length - 1) * points.length) / 2) {
+          //then find the best way
+        }
+      });
+    }
+  }
 }
+
+function getAllDistances() {}
