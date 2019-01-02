@@ -29,3 +29,19 @@ a#side-bar-button {
 .noselect {
   user-select: none;
 }
+
+#loading-background {
+  background-color: inherit;
+  height: 100vh;
+  width: calc(100% - 300px);
+  position: absolute;
+  right: 0;
+  top: 0;
+  background-color: white;
+  opacity: 0.2;
+}
+.load-spinner {
+  top: 50%;
+  left: 50%;
+  z-index: 1000;
+}

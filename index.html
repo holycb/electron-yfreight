@@ -7,8 +7,14 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
     />
     <link rel="stylesheet" type="text/css" href="styles.css" />
+    <link rel="stylesheet" href="node_modules\material-icons\iconfont\material-icons.css">
     <script src="js/map.js"></script>
     <script src="js/layout.js"></script>
+
+    <script src="js/tsp/GA.js"></script>
+    <script src="js/tsp/tsp_solver.js"></script>
+    <script src="js/tsp/utils.js"></script>
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script
       src="https://api-maps.yandex.ru/2.1/?apikey=1bc87f1e-1a9c-43a0-80ea-2635f4be4c63&lang=ru_RU"
@@ -62,7 +68,7 @@
           class="waves-effect waves-teal btn-flat"
           id="side-bar-button-click"
           style="margin-top: 38.3px;"
-        >Get distance 0 to 1</a
+        >Best way</a
         >
         <div id="side-list">
           <!-- <a href="#!" class="collection-item">Test</a> -->
@@ -79,3 +85,13 @@
     });
   </script>
 </html>
+
+<div id="loading-background" style="display: none;">
+  <div class="preloader-wrapper big active load-spinner">
+    <div class="spinner-layer spinner-blue-only">
+      <div class="circle-clipper left"><div class="circle"></div></div>
+      <div class="gap-patch"><div class="circle"></div></div>
+      <div class="circle-clipper right"><div class="circle"></div></div>
+    </div>
+  </div>      
+</div>

@@ -105,11 +105,32 @@ function setBestWay() {
 
         //waiting for all the results...
         if (results.length == ((points.length - 1) * points.length) / 2) {
-          //then find the best way
+          //then find the best way          
+          findBestWay(points, results);
         }
       });
     }
   }
+}
+
+function setNewWay (pointNumbers) {
+  const points = getCoordPoints();
+  const names = getNamePoints();
+  myMap.geoObjects.remove(multiRoute);
+  multiRoute = new ymaps.multiRouter.MultiRoute(
+    {
+      referencePoints: pointNumbers.map((x) => points[x]),
+      params: {
+        reverseGeocoding: true
+      }
+    },
+    {
+      editorMidPointsType: 'via',
+      editorDrawOver: false
+    }
+  );
+  myMap.geoObjects.add(multiRoute);
+  updateSideLayout(pointNumbers.map((x) => names[x]));
 }
 
 function getAllDistances() {}
