@@ -52,14 +52,22 @@ function findBestWay(wayPoints, wayDistances, setWayFunc) {
       if (currentGeneration === 500) {
         running = false;
       }
-    } 
-    else {
-      console.log("There are " + points.length + " points in the map, "
-        +"the " + currentGeneration + "th generation with "
-        + mutationTimes + " times of mutation. best value: "
-        + ~~(bestValue));
+    } else {
+      console.log(
+        'There are ' +
+          points.length +
+          ' points in the map, ' +
+          'the ' +
+          currentGeneration +
+          'th generation with ' +
+          mutationTimes +
+          ' times of mutation. best value: ' +
+          ~~bestValue
+      );
       console.log(solution);
-      solution = solution.slice(solution.indexOf(0), solution.length).concat(solution.slice(0, solution.indexOf(0)));
+      solution = solution
+        .slice(solution.indexOf(0), solution.length)
+        .concat(solution.slice(0, solution.indexOf(0)));
       clearInterval(interval);
       setNewWay(solution);
       removeSpinner();

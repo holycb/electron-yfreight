@@ -43,8 +43,8 @@ function initButtons() {
 
 function updateSideLayout(pointsList) {
   const LIST_ITEM_CLASS = 'collection-item noselect';
-  const BUTTON_BADGE_CLASS = 'btn-floating btn-small waves-effect waves-light red';
-
+  const BUTTON_BADGE_CLASS =
+    'btn-floating btn-small waves-effect waves-light red';
 
   let sideList = document.querySelector('#side-list');
 
@@ -54,26 +54,23 @@ function updateSideLayout(pointsList) {
   while (sideList.lastChild) {
     sideList.removeChild(sideList.firstChild);
   }
-  
+
   for (i of pointsList) {
     let newListItem = document.createElement('a');
     newListItem.className = LIST_ITEM_CLASS;
     newListItem.innerText = i;
     if (currentLayout === 'map') {
-
       const badgeSpan = document.createElement('span');
       badgeSpan.className = 'badge';
       badgeSpan.innerHTML = '<i class="material-icons">close</i>';
       badgeSpan.addEventListener('click', () => {
-      // TODO: удалять элемент из маршрута
+        // TODO: удалять элемент из маршрута
       });
       newListItem.appendChild(badgeSpan);
-  
     }
-    
+
     sideList.appendChild(newListItem);
   }
-  
 }
 
 function initSideNav() {

@@ -12,7 +12,7 @@ function GANextGeneration() {
   selection();
   crossover();
   mutation();
-  
+
   //if(UNCHANGED_GENS > POPULATION_SIZE + ~~(points.length/10)) {
   //MUTATION_PROBABILITY = 0.05;
   //if(doPreciseMutate) {
@@ -98,8 +98,9 @@ function mutation() {
       }
       i--;
     }
-    if (population[i]) 
-      population[i] = population[i].slice(population[i].indexOf(0), population[i].length)
+    if (population[i])
+      population[i] = population[i]
+        .slice(population[i].indexOf(0), population[i].length)
         .concat(population[i].slice(0, population[i].indexOf(0)));
   }
 }
@@ -205,7 +206,7 @@ function getCurrentBest() {
 function setRoulette() {
   //calculate all the fitness
   for (var i = 0; i < values.length; i++) {
-    fitnessValues[i] = 1.0 / (values[i]*(population[i][0] === 0 ? 1 : 10));
+    fitnessValues[i] = 1.0 / (values[i] * (population[i][0] === 0 ? 1 : 10));
   }
   //set the roulette
   var sum = 0;

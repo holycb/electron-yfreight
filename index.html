@@ -7,20 +7,24 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
     />
     <link rel="stylesheet" type="text/css" href="styles.css" />
-    <link rel="stylesheet" href="node_modules\material-icons\iconfont\material-icons.css">
+    <link
+      rel="stylesheet"
+      href="node_modules\material-icons\iconfont\material-icons.css"
+    />
     <script src="js/map.js"></script>
     <script src="js/layout.js"></script>
 
     <script src="js/tsp/GA.js"></script>
     <script src="js/tsp/tsp_solver.js"></script>
     <script src="js/tsp/utils.js"></script>
-    
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script
       src="https://api-maps.yandex.ru/2.1/?apikey=1bc87f1e-1a9c-43a0-80ea-2635f4be4c63&lang=ru_RU"
       type="text/javascript"
     ></script>
-    <meta charset="UTF-8"><meta>
+    <meta charset="UTF-8" />
+    <meta />
 
     <title>donkey shit</title>
   </head>
@@ -62,27 +66,29 @@
       <li><a class="waves-effect" href="#!">Reports</a></li>
     </ul>
 
-    
     <div class="layout-container">
-      <div class="side-layout"><a
+      <div class="side-layout">
+        <a
           class="waves-effect waves-teal btn-flat"
           id="side-bar-button-click"
           style="margin-top: 38.3px;"
-        >Best way</a
+          >Best way</a
         >
         <div id="side-list">
           <!-- <a href="#!" class="collection-item">Test</a> -->
         </div>
       </div>
-      
+
       <div class="main-layout"></div>
     </div>
   </body>
   <script src="js/init.js"></script>
   <script>
-    document.querySelector('#side-bar-button-click').addEventListener('click', () => {
-      setBestWay();
-    });
+    document
+      .querySelector('#side-bar-button-click')
+      .addEventListener('click', () => {
+        setBestWay();
+      });
   </script>
 </html>
 
@@ -93,5 +99,5 @@
       <div class="gap-patch"><div class="circle"></div></div>
       <div class="circle-clipper right"><div class="circle"></div></div>
     </div>
-  </div>      
+  </div>
 </div>
