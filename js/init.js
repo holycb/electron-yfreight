@@ -1,3 +1,4 @@
 initialLayout();
+initData();
 initButtons();
 initSideNav();
