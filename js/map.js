@@ -74,10 +74,14 @@ function init() {
     // Adding multiroute to the map.
     myMap.geoObjects.add(multiRoute);
 
-    // Update side layout when add new way point
-    multiRoute.model.events.add('requestsuccess', () => {
-      updateSideLayout(getNamePoints());
-    });
+    initNewRoute();
+  });
+}
+
+function initNewRoute() {
+  // Update side layout when add new way point
+  multiRoute.model.events.add('requestsuccess', () => {
+    updateSideLayout(getNamePoints(), getCoordPoints());
   });
 }
 
@@ -130,7 +134,12 @@ function setNewWay(pointNumbers) {
     }
   );
   myMap.geoObjects.add(multiRoute);
-  updateSideLayout(pointNumbers.map(x => names[x]));
+  initNewRoute();
+  multiRoute.editor.start({
+    addWayPoints: true,
+    removeWayPoints: true
+  });
+  updateSideLayout(pointNumbers.map(x => names[x]), points);
 }
 
 function getAllDistances() {}

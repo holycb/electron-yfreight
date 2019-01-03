@@ -41,32 +41,41 @@ function initButtons() {
   });
 }
 
-function updateSideLayout(pointsList) {
+function updateSideLayout(pointsList, coords) {
   const LIST_ITEM_CLASS = 'collection-item noselect';
-  const BUTTON_BADGE_CLASS =
-    'btn-floating btn-small waves-effect waves-light red';
 
   let sideList = document.querySelector('#side-list');
 
-  if (pointsList.length > 0) sideList.className = 'collection';
+  if (pointsList.length > 0) {
+    sideList.className = 'collection'; 
+    // if (pointsList.length > 1) {
+    //   document
+    //   .querySelector('#side-bar-button-click').classList.push('disabled');
+    // }
+  } 
   else sideList.className = '';
 
   while (sideList.lastChild) {
     sideList.removeChild(sideList.firstChild);
   }
 
+  iter = 0;
   for (i of pointsList) {
     let newListItem = document.createElement('a');
     newListItem.className = LIST_ITEM_CLASS;
     newListItem.innerText = i;
+    newListItem.dataset.index = iter;
     if (currentLayout === 'map') {
       const badgeSpan = document.createElement('span');
       badgeSpan.className = 'badge';
       badgeSpan.innerHTML = '<i class="material-icons">close</i>';
-      badgeSpan.addEventListener('click', () => {
-        // TODO: удалять элемент из маршрута
+      badgeSpan.addEventListener('click', el => {
+        const newCoordsNumbers = [...Array(getCoordPoints().length).keys()];
+        newCoordsNumbers.splice(el.currentTarget.parentElement.dataset.index, 1);
+        setNewWay(newCoordsNumbers);
       });
       newListItem.appendChild(badgeSpan);
+      iter++;
     }
 
     sideList.appendChild(newListItem);
