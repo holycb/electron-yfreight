@@ -1,5 +1,5 @@
 var database = null;
-var sqlite3 = require('sqlite3').verbose();
+var sql = require('sql.js');
 var log = require('electron-log');
 
 function initData()
@@ -7,7 +7,7 @@ function initData()
     document.write("shit");
     log.info("DB init!");
     if(database == null){
-        database = new sqlite3.Database(':memory:');
+        database = new sql.Database();
         db.serialize(function(){
             db.run("CREATE TABLE IF NOT EXISTS `routes` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT, `notice` TEXT);");
             db.run("CREATE TABLE IF NOT EXISTS `points` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, FOREIGN KEY(`route_id`)"+
