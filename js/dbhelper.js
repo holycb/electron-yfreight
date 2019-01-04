@@ -1,35 +1,49 @@
 var database = null;
 var sql = require('sql.js');
 var log = require('electron-log');
+var fs = require('fs');
 
-function initData()
+function initDatabaseOfDataDD()
 {
-    document.write("shit");
     log.info("DB init!");
     if(database == null){
-        database = new sql.Database();
-        db.serialize(function(){
-            db.run("CREATE TABLE IF NOT EXISTS `routes` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT, `notice` TEXT);");
-            db.run("CREATE TABLE IF NOT EXISTS `points` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, FOREIGN KEY(`route_id`)"+
-            +" REFERENCES routes(`id`), `x` REAL, `y` REAL, `notice` TEXT);");
-            db.run("CREATE TABLE IF NOT EXISTS `logs` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `description` TEXT, `time` TEXT);");
-            db.run("INSERT INTO `routes` (`name`, `notice`) VALUES ('Route1', 'Route1_Notice');");
-        });
+        var filebuffer = fs.readFileSync('db.sqlite');
+        database = new sql.Database(filebuffer);
+    
+        // database.run("INSERT INTO `routes` (`name`, `notice`) VALUES ('Route1', 'Route1_Notice');");
+        getAllRoutes();
+        // var data = database.export();
+        // var buffer = Buffer.from(data);
+        // fs.writeFileSync("db.sqlite", buffer);
     }
 }
 
 function getAllRoutes(){
-    db.serialize(function(){
-        db.each("SELECT * FROM routes;", function(err, row) {
-            log.info(row);
-        });
-    });
+    var res = database.exec("SELECT * FROM routes");
+    log.info(res[0].values);
 } 
 
 
 function dbClose(){
     if(database != null){
+        var data = database.export();
+        var buffer = Buffer.from(data);
+        fs.writeFileSync("db.sqlite", buffer);
         database.close();
         database = null;
     }
+}
+
+function createNewDatabase(){
+    
+    var db = new sql.Database();
+    
+    db.run("CREATE TABLE IF NOT EXISTS `routes` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT, `notice` TEXT);");
+    db.run("CREATE TABLE IF NOT EXISTS `points` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `route_id` INTEGER NOT NULL, `x` REAL, `y` REAL, `notice` TEXT, FOREIGN KEY(`route_id`) REFERENCES routes(`id`));");
+    db.run("CREATE TABLE IF NOT EXISTS `logs` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `description` TEXT, `time` TEXT);");
+    
+    var data = database.export();
+    var buffer = Buffer.from(data);
+    fs.writeFileSync("db.sqlite", buffer);
+    log.info("Database was created!");
 }

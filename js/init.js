@@ -1,4 +1,4 @@
 initialLayout();
-initData();
+initDatabaseOfDataDD();
 initButtons();
 initSideNav();
