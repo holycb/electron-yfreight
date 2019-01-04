@@ -3,7 +3,7 @@ var sql = require('sql.js');
 var log = require('electron-log');
 var fs = require('fs');
 
-function initDatabaseOfDataDD()
+function initRouteDatabase()
 {
     log.info("DB init!");
     if(database == null){
@@ -12,9 +12,6 @@ function initDatabaseOfDataDD()
     
         // database.run("INSERT INTO `routes` (`name`, `notice`) VALUES ('Route1', 'Route1_Notice');");
         getAllRoutes();
-        // var data = database.export();
-        // var buffer = Buffer.from(data);
-        // fs.writeFileSync("db.sqlite", buffer);
     }
 }
 
@@ -23,15 +20,60 @@ function getAllRoutes(){
     log.info(res[0].values);
 } 
 
+function insertRoute(name, notice){
+    if(notice == null){
+        notice="";
+    }
+    database.run("INSERT INTO `routes` (`name`, `notice`) VALUES (\'" + name + "\', \'" + notice + "\');");
+}
+
+function insertRoute(name){
+    insertRoute(name, null);
+}
+
+function setRouteNotice(id, notice){
+    database.run("UPDATE `routes` SET `notice`=\'" + notice + "\' WHERE `id` = " + id + ";");
+}
+
+function insertPoint(routeId, x, y, notice){
+    if(notice == null){
+        notice="";
+    }
+    var res = database.run("INSERT INTO `points` (`route_id`, `x`, `y`, `notice`) VALUES (" + routeId + ", " + x + ", " + y + ", \'" + notice + "\');");
+    
+    log.debug("Insertion point result: ");
+    log.debug(res);
+}
+
+function insertPoint(routeId, x, y){
+    insertPoint(routeId, x, y, null);
+}
+
+function setPointNotice(id, notice){
+    database.run("UPDATE `points` SET `notice`=\'" + notice + "\' WHERE `id` = " + id + ";");
+}
 
 function dbClose(){
     if(database != null){
-        var data = database.export();
-        var buffer = Buffer.from(data);
-        fs.writeFileSync("db.sqlite", buffer);
+        saveDatabase();
         database.close();
         database = null;
     }
+}
+
+function getRoutePoints(routeId){
+    var res = database.exec("SELECT * FROM `points` WHERE `route_id` = " + routeId + ";");
+    var result = [];
+    res[0].values.forEach(element => {
+        result.push(PointConverter.convertValueIntoPoint(element));
+    });
+    return result;
+} 
+
+function saveDatabase(){
+    var data = database.export();
+    var buffer = Buffer.from(data);
+    fs.writeFileSync("db.sqlite", buffer);
 }
 
 function createNewDatabase(){
