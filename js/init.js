@@ -1,4 +1,6 @@
+var dbhelper = require('./js/dbhelper.js');
+
 initialLayout();
-initRouteDatabase();
+dbhelper.initRouteDatabase();
 initButtons();
 initSideNav();
