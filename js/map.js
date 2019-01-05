@@ -81,7 +81,7 @@ function init() {
 function initNewRoute() {
   // Update side layout when add new way point
   multiRoute.model.events.add('requestsuccess', () => {
-    updateSideLayout(getNamePoints(), getCoordPoints());
+    updateSideLayout(getNamePoints());
   });
 }
 
@@ -139,7 +139,7 @@ function setNewWay(pointNumbers) {
     addWayPoints: true,
     removeWayPoints: true
   });
-  updateSideLayout(pointNumbers.map(x => names[x]), points);
+  updateSideLayout(pointNumbers.map(x => names[x]));
 }
 
 function getAllDistances() {}

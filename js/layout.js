@@ -28,20 +28,114 @@ function initButtons() {
         }
 
         var newLayout;
-        if (layout === 'map') {
-          newLayout = mapContainer;
-        } else {
-          newLayout = document.createElement('div');
-          newLayout.className = layout;
-        }
-
+        switch (layout) {
+          case 'routes':
+            newLayout = getRoutesLayout();
+            break;
+          case 'notes':
+            newLayout = getNotesLayout();
+            break;
+          case 'map':
+            newLayout = getMapLayout();
+            break;
+          default:
+            console.log('Wrong layout');
+          }
+        currentLayout = layout;
         layoutContainer.appendChild(newLayout);
       }
     });
   });
 }
+// columns = ['123', '122', '124'];
+// data = [['11', '11', '11'], 
+//         ['22', '23', '24']];
+function getRoutesLayout() {
+  const columns = ['123', '122', '124'];
+  const data = [['11', '11', '11'], ['22', '23', '24']];
+  const tableContainer = document.createElement('div');
+  const table = createTable(columns, data, {icons: ['delete', 'menu', 'edit'], eventFunctions: []});;
+  tableContainer.append(table);
+  return tableContainer;
+}
 
-function updateSideLayout(pointsList, coords) {
+function createTable(columns, data, rowEventObject) {
+  const table = document.createElement('table');
+  table.className = 'highlight noselect';
+
+  const tableHead = document.createElement('thead');
+  const trHead = document.createElement('tr');
+  trHead.className = 'noselect';
+
+  if (rowEventObject) {
+    const buttonTh = document.createElement('th');
+    buttonTh.style.width = '15%';
+    trHead.appendChild(buttonTh);
+  
+  }
+  columns.forEach((col) => {
+    const newTh = document.createElement('th');
+    newTh.innerText = col;
+    trHead.appendChild(newTh);
+  });
+  tableHead.appendChild(trHead);
+  table.append(tableHead);
+
+  const tableBody = document.createElement('tbody');
+  data.forEach((row) => {
+    const tr = document.createElement('tr');
+    tr.className = '';
+
+    if (rowEventObject) {
+      const newButtons = createRowButtons(rowEventObject);
+      const td = document.createElement('td');
+      newButtons.forEach((button) => {
+        td.appendChild(button);
+      });
+      tr.appendChild(td);
+    }
+
+    row.forEach((element) => {
+      const td = document.createElement('td');
+      td.innerText = element;
+      tr.appendChild(td);
+    });
+    tableBody.append(tr);
+  });
+  table.append(tableBody);
+  return table;
+}
+/**
+ * 
+ * @param {icons: [], eventFunctions: function[]} rowEventObject 
+ * @returns the button element
+ */
+function createRowButtons(rowEventObject) {
+  const buttons = [];
+  for (let idx = 0; idx < rowEventObject.icons.length; idx++) {
+    const button = document.createElement('a');
+    button.className = 'btn-floating btn-small waves-effect waves-light';
+    button.style.margin = '5px';
+    const i = document.createElement('i');
+    i.className = 'material-icons';
+    i.innerText = rowEventObject.icons[idx];
+    button.appendChild(i);
+    button.addEventListener('click', rowEventObject.eventFunctions[idx]);
+    buttons.push(button);
+  }
+  return buttons;
+}
+
+function getNotesLayout() {
+
+}
+function getMapLayout() {
+  return mapContainer;
+}
+
+
+
+function updateSideLayout(pointsList) {
   const LIST_ITEM_CLASS = 'collection-item noselect';
 
   let sideList = document.querySelector('#side-list');
