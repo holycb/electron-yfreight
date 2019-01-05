@@ -10,4 +10,12 @@ class Point{
         this.y = y;
         this.x = x;
     }
+
+    constructor(id, routeId, x, y, notice){
+        this.routeId = routeId;
+        this.y = y;
+        this.x = x;
+        this.id = id;
+        this.routeId = routeId;
+    }
 }
