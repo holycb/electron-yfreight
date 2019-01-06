@@ -156,16 +156,7 @@ function updateSideLayout(pointsList) {
   iter = 0;
   for (i of pointsList) {
     let newListItem = document.createElement('a');
-    newListItem.className = LIST_ITEM_CLASS;    
-    // <li class="collection-item">
-    //   <div>
-    //     Alvin
-    //     <a href="#!" class="secondary-content">
-    //       <i class="material-icons">send</i>
-    //     </a>
-    //   </div>
-    // </li>
-
+    newListItem.className = LIST_ITEM_CLASS;
     newListItem.innerText = i;
     newListItem.dataset.index = iter;
     if (currentLayout === 'map') {
@@ -205,4 +196,8 @@ function setSpinner() {
 function removeSpinner() {
   const background = document.getElementById('loading-background');
   background.style.display = 'none';
+}
+
+function routePrepareAndSave() {
+  console.log(123);
 }

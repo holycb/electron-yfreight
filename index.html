@@ -71,6 +71,9 @@
           style="margin-top: 38.3px;"
           >Best way</a
         >
+        <!-- Modal Trigger -->
+        <a class="waves-effect waves-light btn modal-trigger" href="#modal1" >Modal</a>
+
         <div id="side-list">
           <!-- <a href="#!" class="collection-item">Test</a> -->
         </div>
@@ -86,6 +89,11 @@
       .addEventListener('click', () => {
         setBestWay();
       });
+      document.addEventListener('DOMContentLoaded', function() {
+        var elems = document.querySelectorAll('.modal');
+        var instances = M.Modal.init(elems);
+      });
+
   </script>
 </html>
 
@@ -99,5 +107,33 @@
         <div class="circle-clipper right"><div class="circle"></div></div>
       </div>
     </div>
+  </div>
+</div>
+
+<div id="modal1" class="modal">
+  <div class="modal-content">
+    <h4 id="modal-name">Saving</h4>
+    <form action="routePrepareAndSave()" class="col s12">
+      <div class="row">
+        <div class="col s12">
+          <div class="input-field inline">
+            <input id="name-inline" type="text" class="validate" data-length="10">
+            <label for="name-inline">Name</label>
+            <span class="helper-text" data-error="Such name already exists" data-success=""></span>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s12">
+          <textarea id="route-note" class="materialize-textarea"></textarea>
+          <label for="route-note">Note</label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn waves-effect waves-light" type="submit" name="action">Save
+          <i class="material-icons right">save</i>
+        </button>
+      </div>
+    </form>
   </div>
 </div>
