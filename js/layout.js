@@ -156,12 +156,21 @@ function updateSideLayout(pointsList) {
   iter = 0;
   for (i of pointsList) {
     let newListItem = document.createElement('a');
-    newListItem.className = LIST_ITEM_CLASS;
+    newListItem.className = LIST_ITEM_CLASS;    
+    // <li class="collection-item">
+    //   <div>
+    //     Alvin
+    //     <a href="#!" class="secondary-content">
+    //       <i class="material-icons">send</i>
+    //     </a>
+    //   </div>
+    // </li>
+
     newListItem.innerText = i;
     newListItem.dataset.index = iter;
     if (currentLayout === 'map') {
-      const badgeSpan = document.createElement('span');
-      badgeSpan.className = 'badge';
+      const badgeSpan = document.createElement('a');
+      badgeSpan.className = 'secondary-content';
       badgeSpan.innerHTML = '<i class="material-icons">close</i>';
       badgeSpan.addEventListener('click', el => {
         const newCoordsNumbers = [...Array(getCoordPoints().length).keys()];
