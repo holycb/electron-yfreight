@@ -11,15 +11,16 @@ module.exports = {
         log.info("DB init!");
         if(database == null){
             // createNewDatabase();
-            // saveDatabase();
             var filebuffer = fs.readFileSync('db.sqlite');
             database = new sql.Database(filebuffer);
+            // saveDatabase();
+            
             // log.debug(getAllRoutes());
         }
     },
 
     
-    // returns value like: [ [id1, name1], [id2, name2] ]
+    // returns value like: [ [id1, name1, notice1], [id2, name2, notice2] ]
     getAllRoutes: function(){
         var res = database.exec("SELECT * FROM `routes`;");
         if(res.length != 0){
@@ -28,11 +29,25 @@ module.exports = {
         else return [];
     },
 
-    insertRoute: function(name){
-        database.run("INSERT INTO `routes` (`name`) VALUES (\'" + name + "\');");
+    //data example: [ name, notice ]
+    insertRoute: function(route){
+        database.run("INSERT INTO `routes` (`name`, `notice`) VALUES (\'" + route[0] + "\', \'" + route[1] + "\');");
     },
 
-    
+    //data example: [ name, notice ]
+    saveRouteNotice: function(route){
+        database.run("UPDATE `routes` SET `notice`=\'" + route[1] + "\' WHERE `name` = \'" + route[0] + "\';");
+    },
+
+    //returns true if name already exists, else false
+    isRouteNameExists: function(name){
+        var res = database.exec("SELECT `id` FROM `routes` WHERE `name` = \'" + name + "\';");
+        if(res.length != 0){
+            return true;
+        }
+        else return false;
+    },
+
     // returns value like: [ [id1, routeid, x1, y1], [id2, routeid, x2, y2] ]
     getRoutePoints: function(name){
         var route = database.exec("SELECT `id` from `routes` WHERE `name` = \'" + name + "\';");
@@ -49,7 +64,7 @@ module.exports = {
     
     //date format: name, [[x1, y1], [x2, y2]]
     //example:  "Route1", [[1.0, 1.0], [2.0, 2.0]]
-    saveRoute: function(name, points){
+    saveRoutePoints: function(name, points){
         var route = database.exec("SELECT `id` from `routes` WHERE `name` = \'" + name + "\';");
         if(route.length == 0){
             return false;
@@ -152,7 +167,7 @@ function createNewDatabase(){
     
     var db = new sql.Database();
     
-    db.run("CREATE TABLE IF NOT EXISTS `routes` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT);");
+    db.run("CREATE TABLE IF NOT EXISTS `routes` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT, `notice` TEXT);");
     db.run("CREATE TABLE IF NOT EXISTS `points` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `route_id` INTEGER NOT NULL, `x` REAL, `y` REAL, `place` INTEGER NOT NULL, FOREIGN KEY(`route_id`) REFERENCES routes(`id`));");
     db.run("CREATE TABLE IF NOT EXISTS `note_points` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `x` REAL, `y` REAL, `notice` TEXT);");
     db.run("CREATE TABLE IF NOT EXISTS `cars` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT, `plate` TEXT, `consumption` REAL);");
