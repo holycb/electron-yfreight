@@ -107,7 +107,10 @@ function createTable(columns, data, rowEventObject) {
   table.append(tableHead);
 
   const tableBody = document.createElement('tbody');
+
+  let rowCount = 0;
   data.forEach((row) => {
+    rowCount = rowCount + 1;
     const tr = document.createElement('tr');
     tr.className = '';
 
@@ -119,11 +122,21 @@ function createTable(columns, data, rowEventObject) {
       });
       tr.appendChild(td);
     }
-
+    
+    let colCount = 0;
+    tr.dataset.id = row[0];
     row.forEach((element) => {
+      
       const td = document.createElement('td');
-      td.innerText = element;
+      
+      if (colCount === 0) {
+        td.innerText = colCount+1;
+      } else {
+        td.innerText = element;
+      }
+
       tr.appendChild(td);
+      colCount = colCount + 1;
     });
     tableBody.append(tr);
   });
@@ -152,7 +165,20 @@ function createRowButtons(rowEventObject) {
 }
 
 function getPointsLayout() {
-
+  const columns = [
+    {text: '№', width: '30px'},
+    {text: 'Название'},
+    {text: 'Описание'}];
+  const data = dbhelper.getNotePoints();
+  let tableContainer;
+  if (data.length > 0) {
+    tableContainer = document.createElement('div');
+    const table = createTable(columns, data);
+    tableContainer.append(table); 
+  } else {
+    tableContainer = noTableElementsDiv('пунктов');
+  }
+  return tableContainer;
 }
 
 function getCarsLayout() {
@@ -228,22 +254,40 @@ function removeSpinner() {
   background.style.display = 'none';
 }
 
-function routePrepareAndSave() {
-  const route = {
-    name: document.getElementById('name-inline').value,
-    note: document.getElementById('route-note').value,
-    coords: getCoordPoints()
-  };
-  if (dbhelper.isRouteNameExists(route.name) || !route.name || route.name === '') {
-    document.querySelector('#name-inline').className =  'validate invalid';
+function modalSaveEvent() {
+  if (document.querySelector('#side-bar-save-button').modalInstance.mode === 'route') {
+    const route = {
+      name: document.getElementById('name-inline').value,
+      note: document.getElementById('route-note').value,
+      coords: getCoordPoints()
+    };
+    if (dbhelper.isRouteNameExists(route.name) || !route.name || route.name === '') {
+      document.querySelector('#name-inline').className =  'validate invalid';
+    } else {
+      dbhelper.insertRoute([route.name, route.note]);
+      if (route.coords.length > 0)
+        dbhelper.saveRoutePoints(route.name, route.coords);
+      document.getElementById('name-inline').value = '';
+      document.getElementById('route-note').value = '';
+      document.querySelector('#side-bar-save-button').modalInstance.close();  
+      setNewWay([]);
+    }
   } else {
-    dbhelper.insertRoute([route.name, route.note]);
-    if (route.coords.length > 0)
-      dbhelper.saveRoutePoints(route.name, route.coords);
+    const point = {
+      name: document.getElementById('name-inline').value,
+      note: document.getElementById('route-note').value,
+      coords: lastPointedCoords
+    };
+    dbhelper.insertNotePoint([point.name, point.coords[0], point.coords[1], point.note]);
     document.getElementById('name-inline').value = '';
     document.getElementById('route-note').value = '';
-    document.querySelector('#side-bar-save-button').modalInstance.close();  
-    setNewWay([]);
+    document.querySelector('#side-bar-save-button').modalInstance.close();
   }
 
+}
+
+function openModalForSavePoint() {
+  document.querySelector('#side-bar-save-button').modalInstance.mode = 'point';
+  document.getElementById('modal-name').innerText = 'Сохранение точки на карте';
+  document.querySelector('#side-bar-save-button').modalInstance.open();
 }

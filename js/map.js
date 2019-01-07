@@ -1,5 +1,6 @@
 var myMap;
 var multiRoute;
+var lastPointedCoords;
 
 function init() {
   /**
@@ -24,33 +25,37 @@ function init() {
     }
   );
 
-  var buttonEditor = new ymaps.control.Button({
+  var createRouteButton = new ymaps.control.Button({
     data: { content: 'Редактирование маршрута' }
   });
-  var buttonEditor = new ymaps.control.Button({
-    data: {content: 'Сохранение точек' }
+  var createNoteButton = new ymaps.control.Button({
+    data: { content: 'Отметить точку на карте' }
+  });
+  
+  let cursor;
+  createNoteButton.events.add('select', () => {
+    cursor = myMap.cursors.push('crosshair')
+    myMap.events.once('click', function (e) {
+      lastPointedCoords = e.get('coords');
+      cursor.remove();
+      openModalForSavePoint();
+      createNoteButton.deselect();
+    });
+  });
+  createNoteButton.events.add('deselect', () => {
+    if (cursor) 
+      cursor.remove();
+    myMap.events.remove('click');
   });
 
-  buttonEditor.events.add('select', () => {
-    /**
-     * Enabling edit mode.
-     * As options, you can pass an object with fields:
-     * addWayPoints - Allows adding new waypoints by clicking on the map. Default value: false.
-     * dragWayPoints - Allows dragging existing waypoints. Default value: true.
-     * removeWayPoints - Allows deleting waypoints by double-clicking them. Default value: false.
-     * dragViaPoints - Allows dragging existing throughpoints. Default value: true.
-     * removeViaPoints - Allows deleting throughpoints by double-clicking them. Default value: true.
-     * addMidPoints - Allows adding intermediate points or waypoints by dragging the marker that appears when pointing the mouse at the active route. The type of points to add is set by the midPointsType option. Default value: true.
-     * @see https://api.yandex.ru/maps/doc/jsapi/2.1/ref/reference/multiRouter.MultiRoute.xml#editor
-     */
+  createRouteButton.events.add('select', () => {
     multiRoute.editor.start({
       addWayPoints: true,
       removeWayPoints: true
     });
   });
 
-  buttonEditor.events.add('deselect', () => {
-    // Turning off edit mode.
+  createRouteButton.events.add('deselect', () => {
     multiRoute.editor.stop();
   });
 
@@ -66,7 +71,8 @@ function init() {
           'fullscreenControl',
           'zoomControl',
           'geolocationControl',
-          buttonEditor
+          createRouteButton,
+          createNoteButton
         ]
       },
       {
@@ -74,7 +80,6 @@ function init() {
       }
     );
 
-    // Adding multiroute to the map.
     myMap.geoObjects.add(multiRoute);
 
     initNewRoute();

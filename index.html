@@ -95,6 +95,10 @@
         var instances = M.Modal.init(elems);
         document.querySelector('#side-bar-save-button').modalInstance = instances[0];
       });
+      document.querySelector('#side-bar-save-button').addEventListener('click', () => {
+        document.querySelector('#side-bar-save-button').modalInstance.mode = 'route';
+        document.getElementById('modal-name').innerText = 'Сохранение маршрута';
+      });
 
   </script>
 </html>
@@ -115,7 +119,7 @@
 <div id="modal1" class="modal">
   <div class="modal-content">
     <h4 id="modal-name">Сохранение</h4>
-    <form action="javascript:void(0); routePrepareAndSave();" class="col s12">
+    <form action="javascript:void(0); modalSaveEvent();" class="col s12">
       <div class="row">
         <div class="col s12">
           <div class="input-field inline">
