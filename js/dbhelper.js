@@ -107,6 +107,15 @@ module.exports = {
         database.run("DELETE FROM `note_points` WHERE `id` = " + id + ";");
     },
 
+    // returns value like: [ [id1, "name1", x1, y1, "notice1"], [id2, "name2", x2, y2, "notice2"] ]
+    getNotePoints: function(routeId){
+        var res = database.exec("SELECT * FROM `note_points`;");
+        if(res.length != 0){
+            return res[0].values;
+        }
+        else return [];
+    },
+
     dbClose: function(){
         if(database != null){
             saveDatabase();
