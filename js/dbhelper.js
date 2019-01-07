@@ -204,3 +204,4 @@ function createNewDatabase(){
     fs.writeFileSync("db.sqlite", buffer);
     log.info("Database was created!");
 }
+
