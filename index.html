@@ -27,55 +27,56 @@
     <meta charset="UTF-8" />
     <meta />
 
-    <title>donkey shit</title>
+    <title></title>
   </head>
   <body>
     <a
       class="waves-effect btn-flat"
       id="side-bar-button"
-      style="margin-top: 8.3px;
-             border-radius: 30px;
-             z-index: 1001;"
     ><i class="material-icons">menu</i></a
     >
     <ul id="slide-out" class="sidenav">
       <li>
-        <div class="row">
-          <div class="col s4 offset-s8">
+        <div class="row" style="height: 30px;">
+          <!-- <div class="col s4 offset-s8">
             <a class="waves-effect btn-flat"><i class="material-icons">settings</i></a>
-          </div>
+          </div> -->
         </div>
       </li>
 
-      <li><a class="waves-effect navigation-button" id="map-button">Map</a></li>
+      <li><a class="waves-effect navigation-button" id="map-button">Карта</a></li>
       <li>
         <a class="waves-effect navigation-button" id="routes-button"
-          >Routes</a
+          >Маршруты</a
         >
       </li>
       <li>
-        <a class="waves-effect navigation-button" id="notes-button"
-          >Notes</a
+        <a class="waves-effect navigation-button" id="points-button"
+          >Пункты</a
         >
       </li>
       <li><div class="divider"></div></li>
-      <li><a class="subheader">Additional</a></li>
-      <li><a class="waves-effect" href="#!">Reports</a></li>
+      <li><a class="subheader">Дополнительно</a></li>
+      <li><a class="waves-effect navigation-button" id="cars-button"
+        >Транспортные средства</a></li>
     </ul>
 
     <div class="layout-container">
       <div class="side-layout">
-        <a
-          class="waves-effect btn-flat"
-          id="side-bar-button-click"
-          style="margin-top: 38.3px;"
-          >Best way</a
-        >
-        <!-- Modal Trigger -->
-        <a class="waves-effect waves-light btn modal-trigger" href="#modal1" >Modal</a>
-
+        <div class="button-pan">
+          <div class="row">
+            <div class="col s6"></div>
+            <div class="col s6">
+              <a class="waves-effect btn-flat" id="side-bar-best-way-button">
+                <i class="material-icons">gesture</i>
+              </a>
+              <a class="waves-effect btn-flat modal-trigger" id="side-bar-save-button" href="#modal1" >
+                <i class="material-icons">save</i>
+              </a>
+            </div>
+          </div>
+        </div>
         <div id="side-list">
-          <!-- <a href="#!" class="collection-item">Test</a> -->
         </div>
       </div>
 
@@ -85,13 +86,18 @@
   <script src="js/init.js"></script>
   <script>
     document
-      .querySelector('#side-bar-button-click')
+      .querySelector('#side-bar-best-way-button')
       .addEventListener('click', () => {
         setBestWay();
       });
       document.addEventListener('DOMContentLoaded', function() {
         var elems = document.querySelectorAll('.modal');
         var instances = M.Modal.init(elems);
+        document.querySelector('#side-bar-save-button').modalInstance = instances[0];
+      });
+      document.querySelector('#side-bar-save-button').addEventListener('click', () => {
+        document.querySelector('#side-bar-save-button').modalInstance.mode = 'route';
+        document.getElementById('modal-name').innerText = 'Сохранение маршрута';
       });
 
   </script>
@@ -112,26 +118,26 @@
 
 <div id="modal1" class="modal">
   <div class="modal-content">
-    <h4 id="modal-name">Saving</h4>
-    <form action="routePrepareAndSave()" class="col s12">
+    <h4 id="modal-name">Сохранение</h4>
+    <form action="javascript:void(0); modalSaveEvent();" class="col s12">
       <div class="row">
         <div class="col s12">
           <div class="input-field inline">
             <input id="name-inline" type="text" class="validate" data-length="10">
-            <label for="name-inline">Name</label>
-            <span class="helper-text" data-error="Such name already exists" data-success=""></span>
+            <label for="name-inline">Название</label>
+            <span class="helper-text" id="name-input-label"
+              data-error="Маршрут уже существует" data-success=""></span>
           </div>
         </div>
       </div>
       <div class="row">
         <div class="input-field col s12">
           <textarea id="route-note" class="materialize-textarea"></textarea>
-          <label for="route-note">Note</label>
+          <label for="route-note">Описание</label>
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn waves-effect waves-light" type="submit" name="action">Save
-          <i class="material-icons right">save</i>
+        <button class="btn waves-effect waves-light" type="submit" name="action">Сохранить
         </button>
       </div>
     </form>
