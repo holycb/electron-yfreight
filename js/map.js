@@ -25,7 +25,10 @@ function init() {
   );
 
   var buttonEditor = new ymaps.control.Button({
-    data: { content: 'Создать маршрут' }
+    data: { content: 'Редактирование маршрута' }
+  });
+  var buttonEditor = new ymaps.control.Button({
+    data: {content: 'Сохранение точек' }
   });
 
   buttonEditor.events.add('select', () => {

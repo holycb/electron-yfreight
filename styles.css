@@ -1,5 +1,5 @@
 a#side-bar-button {
-  z-index: 999;
+  z-index: 1001;
 }
 #map {
   height: 100%;
@@ -51,5 +51,16 @@ a#side-bar-button {
   top: 50%;
   left: 50%;
 }
-
+table {
+  overflow-wrap: break-word;
+}
+td {
+  max-width: 300px;
+}
 .ellipsis { text-overflow: ellipsis; }
+
+#side-bar-button, #side-bar-best-way-button, #side-bar-save-button {
+  margin-top: 8.3px;
+  border-radius: 30px;
+  z-index: 1001;
+}
