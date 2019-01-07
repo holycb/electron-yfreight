@@ -130,8 +130,10 @@ module.exports = {
         database.run("INSERT INTO `cars` (`name`, `plate`, `consumption`) VALUES (\'" + car[0] + "\', \'" + car[1] + "\', \'" + car[2] + "\');");
     },
 
-    deleteCar:  function(name){
-        database.run("DELETE FROM `cars` WHERE `name` = \'" + name + "\';");
+
+    //data format: id
+    deleteCar: function(id){
+        database.run("DELETE FROM `cars` WHERE `id` = \'" + id + "\';");
     },
 
     // returns value like: [ [id1, name1, plate1, comsumption1], [id2, name2, plate2, comsumption2] ]
