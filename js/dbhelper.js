@@ -10,11 +10,16 @@ module.exports = {
     {
         log.info("DB init!");
         if(database == null){
-            //createNewDatabase();
+            // createNewDatabase();
             var filebuffer = fs.readFileSync('db.sqlite');
             database = new sql.Database(filebuffer);
-            //saveDatabase();
-            
+            // insertCar(["Chevrolet Niva", "H126PK", 11.0]);
+            // insertCar(["Toyota Rav4", "A334AT", 7.5]);
+            // insertCar(["Honda Stream", "X541OP", 8.1]);
+            // insertCar(["Mazda Demio", "H908CB", 6.5]);
+            // insertCar(["UAZ Patriot", "T131KM", 13.0]);
+            // saveDatabase();
+            // test();
             // log.debug(getAllRoutes());
         }
     },
@@ -97,7 +102,7 @@ module.exports = {
     //date format [name, x, y, notice]
     //example ["name1", 1.0, 1.0, "This is notice"]
     insertNotePoint: function(point){
-        var res = database.run("INSERT INTO `note_points` (`name`, x`, `y`, `notice`) VALUES (\'" + point[0] + "\', \'" + point[1] + "\', \'" + point[2] + "\', \'" + point[3] + "\');");
+        var res = database.run("INSERT INTO `note_points` (`name`, `x`, `y`, `notice`) VALUES (\'" + point[0] + "\', \'" + point[1] + "\', \'" + point[2] + "\', \'" + point[3] + "\');");
         log.debug("Insertion point result: ");
         log.debug(res);
     },
@@ -107,9 +112,29 @@ module.exports = {
         database.run("DELETE FROM `note_points` WHERE `id` = " + id + ";");
     },
 
-    // returns value like: [ [id1, "name1", x1, y1, "notice1"], [id2, "name2", x2, y2, "notice2"] ]
-    getNotePoints: function(routeId){
+    // returns value like: [ {id: 1, name: "name1", note: "notice1", coords: [x1, y1]},
+    // {id: 2, name: "name2", note: "notice2", coords: [x2, y2]} ]
+    getNotePointsForMap: function(routeId){
         var res = database.exec("SELECT * FROM `note_points`;");
+        if(res.length != 0){
+            var values = res[0].values;
+            var result = [];
+            values.forEach(element => {
+                result.push({
+                    id: element[0],
+                    name: element[1],
+                    note: element[4],
+                    coords: [ element[2], element[3] ] 
+                });
+            });
+            return result;
+        }
+        else return [];
+    },
+
+    // returns value like: [ [id1, "name1", "notice1"], [id2, "name2", "notice2"] ]
+    getNotePoints: function(routeId){
+        var res = database.exec("SELECT `id`, `name`, `notice` FROM `note_points`;");
         if(res.length != 0){
             return res[0].values;
         }
@@ -146,11 +171,22 @@ module.exports = {
     }
 }
 
+
+function test(){
+}
+
+
 function saveDatabase(){
     var data = database.export();
     var buffer = Buffer.from(data);
     fs.writeFileSync("db.sqlite", buffer);
     log.info("Database was saved!");
+}
+
+//date format [name, plate, consumption]
+    //example ["Niva", "X967HP", 10.5]
+function insertCar(car){
+    database.run("INSERT INTO `cars` (`name`, `plate`, `consumption`) VALUES (\'" + car[0] + "\', \'" + car[1] + "\', \'" + car[2] + "\');");
 }
 
 function createNewDatabase(){
