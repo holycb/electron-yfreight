@@ -10,10 +10,10 @@ module.exports = {
     {
         log.info("DB init!");
         if(database == null){
-            // createNewDatabase();
+            //createNewDatabase();
             var filebuffer = fs.readFileSync('db.sqlite');
             database = new sql.Database(filebuffer);
-            // saveDatabase();
+            //saveDatabase();
             
             // log.debug(getAllRoutes());
         }
@@ -34,9 +34,9 @@ module.exports = {
         database.run("INSERT INTO `routes` (`name`, `notice`) VALUES (\'" + route[0] + "\', \'" + route[1] + "\');");
     },
 
-    //data example: [ name, notice ]
+    //data example: [ id, notice ]
     saveRouteNotice: function(route){
-        database.run("UPDATE `routes` SET `notice`=\'" + route[1] + "\' WHERE `name` = \'" + route[0] + "\';");
+        database.run("UPDATE `routes` SET `notice`=\'" + route[1] + "\' WHERE `id` = \'" + route[0] + "\';");
     },
 
     //returns true if name already exists, else false
@@ -49,12 +49,7 @@ module.exports = {
     },
 
     // returns value like: [ [id1, routeid, x1, y1], [id2, routeid, x2, y2] ]
-    getRoutePoints: function(name){
-        var route = database.exec("SELECT `id` from `routes` WHERE `name` = \'" + name + "\';");
-        if(route.length == 0){
-            return false;
-        }
-        var routeId = route[0].values[0][0];
+    getRoutePoints: function(routeId){
         var res = database.exec("SELECT * FROM `points` WHERE `route_id` = " + routeId + ";");
         if(res.length != 0){
             return res[0].values;
@@ -62,15 +57,10 @@ module.exports = {
         else return [];
     },
     
-    //date format: name, [[x1, y1], [x2, y2]]
-    //example:  "Route1", [[1.0, 1.0], [2.0, 2.0]]
-    saveRoutePoints: function(name, points){
-        var route = database.exec("SELECT `id` from `routes` WHERE `name` = \'" + name + "\';");
-        if(route.length == 0){
-            return false;
-        }
-        var id = route[0].values[0][0];
-        database.run("DELETE FROM `points` WHERE `route_id` = \'" + id + "\';");
+    //date format: id, [[x1, y1], [x2, y2]]
+    //example:  5, [[1.0, 1.0], [2.0, 2.0]]
+    saveRoutePoints: function(routeId, points){
+        database.run("DELETE FROM `points` WHERE `route_id` = \'" + routeId + "\';");
         query = "INSERT INTO `points` (`route_id`, `place`, `x`, `y`) VALUES ";
         for(i = 0; i<points.length; i++){
             str = "( " + points[i][0] + ", " + (i+1) + ", \'" + points[i][1] + "\', \'" + points[i][2] + "\')";
@@ -85,14 +75,9 @@ module.exports = {
         database.run(query);
     },
     
-    deleteRoute: function(name){
-        var route = database.exec("SELECT `id` from `routes` WHERE `name` = \'" + name + "\';");
-        if(route.length == 0){
-            return false;
-        }
-        var id = route[0].values[0][0];
-        database.run("DELETE FROM `routes` WHERE `id` = \'" + id + "\';");
-        database.run("DELETE FROM `points` WHERE `route_id` = \'" + id + "\';");
+    deleteRoute: function(routeId){
+        database.run("DELETE FROM `routes` WHERE `id` = \'" + routeId + "\';");
+        database.run("DELETE FROM `points` WHERE `route_id` = \'" + routeId + "\';");
     },
     
     //date format [route_id, place, x, y]
@@ -103,30 +88,23 @@ module.exports = {
         log.debug(res);
     },
     
-    //date format [x, y, notice]
-    //example [1.0, 1.0, "This is notice"]
+    //date format [id, notice]
+    //example [5, "This is notice"]
     setNotePointNotice: function(pointData){
-        database.run("UPDATE `note_points` SET `notice`=\'" + pointData[2] + "\' WHERE `x` > \'" + (pointData[0]-0.00001) + "\' AND `x` < \'" + (pointData[0]+0.00001) + "\' AND `y` > \'" + (pointData[1]-0.00001) + "\' AND `y` < \'" + (pointData[1]+0.00001)+ "\';");
+        database.run("UPDATE `note_points` SET `notice`=\'" + pointData[1] + "\' WHERE `id` = " + pointData[0] + ";");
     },
     
-    //date format [x, y, notice]
-    //example [1.0, 1.0, "This is notice"]
+    //date format [name, x, y, notice]
+    //example ["name1", 1.0, 1.0, "This is notice"]
     insertNotePoint: function(point){
-        var res = database.run("INSERT INTO `note_points` (`x`, `y`, `notice`) VALUES (\'" + point[0] + "\', \'" + point[1] + "\', " + "\'" + point[2] + "\');");
+        var res = database.run("INSERT INTO `note_points` (`name`, x`, `y`, `notice`) VALUES (\'" + point[0] + "\', \'" + point[1] + "\', \'" + point[2] + "\', \'" + point[3] + "\');");
         log.debug("Insertion point result: ");
         log.debug(res);
     },
     
-    // //date format [x, y, notice]
-    // //example [1.0, 1.0, "This is notice"]
-    // deleteNotePoint:  function(id){
-    //     database.run("DELETE FROM `note_points` WHERE `id` = \'" + id + "\';");
-    // },
-    
-    //date format [x, y]
-    //example [1.0, 1.0]
-    deleteNotePoint:  function(coords){
-        database.run("DELETE FROM `note_points` WHERE `x` > \'" + (coords[0]-0.00001) + "\' AND `x` < \'" + (coords[0]+0.00001) + "\' AND `y` > \'" + (coords[1]-0.00001) + "\' AND `y` < \'" + (coords[1]+0.00001)+ "\';");
+    //date format: id
+    deleteNotePoint:  function(id){
+        database.run("DELETE FROM `note_points` WHERE `id` = " + id + ";");
     },
 
     dbClose: function(){
@@ -161,6 +139,7 @@ function saveDatabase(){
     var data = database.export();
     var buffer = Buffer.from(data);
     fs.writeFileSync("db.sqlite", buffer);
+    log.info("Database was saved!");
 }
 
 function createNewDatabase(){
@@ -169,7 +148,7 @@ function createNewDatabase(){
     
     db.run("CREATE TABLE IF NOT EXISTS `routes` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT, `notice` TEXT);");
     db.run("CREATE TABLE IF NOT EXISTS `points` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `route_id` INTEGER NOT NULL, `x` REAL, `y` REAL, `place` INTEGER NOT NULL, FOREIGN KEY(`route_id`) REFERENCES routes(`id`));");
-    db.run("CREATE TABLE IF NOT EXISTS `note_points` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `x` REAL, `y` REAL, `notice` TEXT);");
+    db.run("CREATE TABLE IF NOT EXISTS `note_points` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT, `x` REAL, `y` REAL, `notice` TEXT);");
     db.run("CREATE TABLE IF NOT EXISTS `cars` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT, `plate` TEXT, `consumption` REAL);");
     db.run("CREATE TABLE IF NOT EXISTS `logs` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `description` TEXT, `time` TEXT);");
     
