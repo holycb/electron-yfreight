@@ -232,7 +232,7 @@ function getPointsLayout() {
         function(el) {
           //edit
           const tableRow = el.target.parentNode.parentElement.parentElement;
-          document.getElementById('name-inline').setAttribute('disabled', true);
+          document.getElementById('name-inline').setAttribute('disabled', '');
           document.getElementById('name-input-label').innerText = tableRow.children[1].textContent;
           document.querySelector('#side-bar-save-button').modalInstance.mode = 'point-edit';
           document.getElementById('modal-name').innerText = 'Изменение заметки для точки на карте';
