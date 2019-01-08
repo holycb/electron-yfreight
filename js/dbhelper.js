@@ -10,16 +10,14 @@ module.exports = {
     {
         log.info("DB init!");
         if(database == null){
-            // createNewDatabase();
+            if(!fs.existsSync('db.sqlite')){
+                createNewDatabase()
+            }
             var filebuffer = fs.readFileSync('db.sqlite');
+            log.debug(filebuffer);
             database = new sql.Database(filebuffer);
-            // insertCar(["Chevrolet Niva", "H126PK", 11.0]);
-            // insertCar(["Toyota Rav4", "A334AT", 7.5]);
-            // insertCar(["Honda Stream", "X541OP", 8.1]);
-            // insertCar(["Mazda Demio", "H908CB", 6.5]);
-            // insertCar(["UAZ Patriot", "T131KM", 13.0]);
+            // 
             // saveDatabase();
-            test();
             // log.debug(getAllRoutes());
         }
     },
@@ -191,9 +189,9 @@ function saveDatabase(){
 
 //date format [name, plate, consumption]
     //example ["Niva", "X967HP", 10.5]
-// function insertCar(car){
-//     database.run("INSERT INTO `cars` (`name`, `plate`, `consumption`) VALUES (\'" + car[0] + "\', \'" + car[1] + "\', \'" + car[2] + "\');");
-// }
+function insertCar(car, db){
+    db.run("INSERT INTO `cars` (`name`, `plate`, `consumption`) VALUES (\'" + car[0] + "\', \'" + car[1] + "\', \'" + car[2] + "\');");
+}
 
 function createNewDatabase(){
     
@@ -204,7 +202,11 @@ function createNewDatabase(){
     db.run("CREATE TABLE IF NOT EXISTS `note_points` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT, `x` REAL, `y` REAL, `notice` TEXT);");
     db.run("CREATE TABLE IF NOT EXISTS `cars` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT, `plate` TEXT, `consumption` REAL);");
     db.run("CREATE TABLE IF NOT EXISTS `logs` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `description` TEXT, `time` TEXT);");
-    
+    insertCar(["Chevrolet Niva", "H126PK", 11.0], db);
+    insertCar(["Toyota Rav4", "A334AT", 7.5], db);
+    insertCar(["Honda Stream", "X541OP", 8.1], db);
+    insertCar(["Mazda Demio", "H908CB", 6.5], db);
+    insertCar(["UAZ Patriot", "T131KM", 13.0], db);
     var data = db.export();
     var buffer = Buffer.from(data);
     fs.writeFileSync("db.sqlite", buffer);
