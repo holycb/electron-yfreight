@@ -70,13 +70,25 @@ function getRoutesLayout() {
   if (data.length > 0) {
     tableContainer = document.createElement('div');
     const table = createTable(columns, data, {
-      icons: ['edit', 'delete'],
+      icons: ['map', 'delete'],
       eventFunctions: [
         function(el) {
-          //delete
+          //show
+          const tableRow = el.target.parentNode.parentElement.parentElement;
+          const route = dbhelper.getRoutePoints().map((x) => {[x[2], x[3]]});
+          // returns value like: [ [id1, routeid, x1, y1], [id2, routeid, x2, y2] ]
+          // getRoutePoints: function(routeId){
+          var toastHTML = `<span>${tableRow.children[1].textContent} - открыт</span>`;
+          M.toast({html: toastHTML});
+          openMapLayoutWithRoute(route);
         },
         function(el) {
           //delete
+          const tableRow = el.target.parentNode.parentElement.parentElement;
+          var toastHTML = `<span>${tableRow.children[1].textContent} - удалена</span>`;
+          M.toast({html: toastHTML});
+          dbhelper.deleteRoute(tableRow.dataset.id);
+          tableRow.remove();
         }
       ]
     });
@@ -85,6 +97,20 @@ function getRoutesLayout() {
     tableContainer = noTableElementsDiv('маршрутов');
   }
   return tableContainer;
+}
+
+function openMapLayoutWithRoute(route) {
+  let layoutContainer = document.querySelector('.main-layout');
+
+  while (layoutContainer.firstChild) {
+    layoutContainer.removeChild(layoutContainer.firstChild);
+  }
+  currentLayout = 'map';
+  document.querySelector('.side-layout').style.width = '300px';
+  document.querySelector('.main-layout').style.width =
+    'calc(100% - 300px)';
+  layoutContainer.appendChild(getMapLayout());
+  setNewCoords(coords);
 }
 
 function noTableElementsDiv(elemNames) {
@@ -199,10 +225,15 @@ function getPointsLayout() {
       icons: ['edit', 'delete'],
       eventFunctions: [
         function(el) {
-          //delete
+          //edit
         },
         function(el) {
           //delete
+          const tableRow = el.target.parentNode.parentElement.parentElement;
+          var toastHTML = `<span>${tableRow.children[1].textContent} - удалена</span>`;
+          M.toast({html: toastHTML});
+          dbhelper.deleteNotePoint(tableRow.dataset.id);
+          tableRow.remove();
         }
       ]
     });
@@ -216,6 +247,7 @@ function getPointsLayout() {
 function getCarsLayout() {}
 
 function getMapLayout() {
+  updateMap();
   return mapContainer;
 }
 

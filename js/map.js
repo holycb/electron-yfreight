@@ -1,6 +1,9 @@
 var myMap;
 var multiRoute;
 var lastPointedCoords;
+var createRouteButton;
+var showPlacemaks;
+
 
 function init() {
   /**
@@ -25,13 +28,13 @@ function init() {
     }
   );
 
-  var createRouteButton = new ymaps.control.Button({
+  createRouteButton = new ymaps.control.Button({
     data: { content: 'Редактирование маршрута' }
   });
   var createNoteButton = new ymaps.control.Button({
     data: { content: 'Отметить точку на карте' }
   });
-  var showPlacemaks = new ymaps.control.Button({
+  showPlacemaks = new ymaps.control.Button({
     data: { content: 'Отображать отмеченные точки' },
     state: { selected: true }
   });
@@ -110,6 +113,23 @@ function init() {
 
     initNewRoute();
   });
+}
+
+function updateMap() {
+  const routeWasEditing = createRouteButton.isSelected();
+
+  myMap.geoObjects.removeAll();
+  myMap.geoObjects.add(multiRoute);
+  if (routeWasEditing) {
+    multiRoute.editor.start({
+      addWayPoints: true,
+      removeWayPoints: true
+    });
+  }
+
+  if (showPlacemaks.isSelected()) {
+    setAllPoints();
+  }
 }
 
 function setAllPoints() {
@@ -198,6 +218,29 @@ function setNewWay(pointNumbers) {
     removeWayPoints: true
   });
   updateSideLayout(pointNumbers.map(x => names[x]));
+}
+
+function setNewCoords(coords) {
+  myMap.geoObjects.remove(multiRoute);
+  multiRoute = new ymaps.multiRouter.MultiRoute(
+    {
+      referencePoints: coords,
+      params: {
+        reverseGeocoding: true
+      }
+    },
+    {
+      editorMidPointsType: 'via',
+      editorDrawOver: false
+    }
+  );
+  myMap.geoObjects.add(multiRoute);
+  initNewRoute();
+  multiRoute.editor.start({
+    addWayPoints: true,
+    removeWayPoints: true
+  });
+  updateSideLayout(getNamePoints());
 }
 
 function getAllDistances() {}
