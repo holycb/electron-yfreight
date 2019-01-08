@@ -226,6 +226,13 @@ function getPointsLayout() {
       eventFunctions: [
         function(el) {
           //edit
+          const tableRow = el.target.parentNode.parentElement.parentElement;
+          document.getElementById('name-inline').setAttribute('disabled', true);
+          document.getElementById('name-input-label').innerText = tableRow.children[1].textContent;
+          document.querySelector('#side-bar-save-button').modalInstance.mode = 'point-edit';
+          document.getElementById('modal-name').innerText = 'Изменение заметки для точки на карте';
+          document.querySelector('#side-bar-save-button').modalInstance.open();
+          updateCurrentTable();
         },
         function(el) {
           //delete
@@ -242,6 +249,32 @@ function getPointsLayout() {
     tableContainer = noTableElementsDiv('пунктов');
   }
   return tableContainer;
+}
+
+function updateCurrentTable() {
+  let layoutContainer = document.querySelector('.main-layout');
+
+  while (layoutContainer.firstChild) {
+    layoutContainer.removeChild(layoutContainer.firstChild);
+  }
+
+  var newLayout;
+  switch (currentLayout) {
+    case 'routes':
+      document.querySelector('.side-layout').style.width = '0px';
+      document.querySelector('.main-layout').style.width = '100%';
+      newLayout = getRoutesLayout();
+      break;
+    case 'points':
+      document.querySelector('.side-layout').style.width = '0px';
+      document.querySelector('.main-layout').style.width = '100%';
+      newLayout = getPointsLayout();
+      break;
+    case 'cars':
+      newLayout = getCarsLayout();
+      break;
+    }
+    layoutContainer.appendChild(newLayout);
 }
 
 function getCarsLayout() {}
@@ -374,7 +407,8 @@ function modalSaveEvent() {
       M.toast({ html: 'Маршрут сохранен!', classes: 'rounded' });
       setNewWay([]);
     }
-  } else {
+  } else if (document.querySelector('#side-bar-save-button').modalInstance.mode ===
+  'point'){
     const point = {
       name: document.getElementById('name-inline').value,
       note: document.getElementById('route-note').value,
@@ -391,11 +425,26 @@ function modalSaveEvent() {
     document.querySelector('#side-bar-save-button').modalInstance.close();
     M.toast({ html: 'Точка на карте сохранена!', classes: 'rounded' });
     saveNewPointOnMap(point);
+  } else {
+    const point = {
+      name: document.getElementById('name-inline').value,
+      note: document.getElementById('route-note').value
+    };
+    dbhelper.setNotePointNotice([
+      point.name,
+      point.note
+    ]);
+    document.getElementById('name-inline').setAttribute('disabled', '');
+    document.getElementById('name-inline').value = '';
+    document.getElementById('route-note').value = '';
+    document.querySelector('#side-bar-save-button').modalInstance.close();
+    M.toast({ html: `${poont.name} успешно изменена`, classes: 'rounded' });
   }
 }
 
 function openModalForSavePoint() {
   document.querySelector('#side-bar-save-button').modalInstance.mode = 'point';
   document.getElementById('modal-name').innerText = 'Сохранение точки на карте';
+  document.getElementById('name-input-label').innerText = 'Название';
   document.querySelector('#side-bar-save-button').modalInstance.open();
 }

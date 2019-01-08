@@ -132,6 +132,7 @@
       .addEventListener('click', () => {
         document.querySelector('#side-bar-save-button').modalInstance.mode =
           'route';
+        document.getElementById('name-input-label').innerText = 'Название';
         document.getElementById('modal-name').innerText = 'Сохранение маршрута';
       });
     document
@@ -175,7 +176,7 @@
               class="validate"
               data-length="10"
             />
-            <label for="name-inline">Название</label>
+            <label for="name-inline" id="name-input-label">Название</label>
             <span
               class="helper-text"
               id="name-input-label"
