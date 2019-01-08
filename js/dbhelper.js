@@ -14,7 +14,6 @@ module.exports = {
                 createNewDatabase()
             }
             var filebuffer = fs.readFileSync('db.sqlite');
-            log.debug(filebuffer);
             database = new sql.Database(filebuffer);
             // 
             // saveDatabase();
@@ -36,7 +35,7 @@ module.exports = {
     //return example: [ id, "name", "notice" ]
     insertRoute: function(route){
         database.run("INSERT INTO `routes` (`name`, `notice`) VALUES (\'" + route[0] + "\', \'" + route[1] + "\');");
-        database.exec("SELECT * FROM `routes` ORDER BY `id` DESC LIMIT 1;");
+        var res = database.exec("SELECT * FROM `routes` ORDER BY `id` DESC LIMIT 1;");
         if(res.length != 0){
             return res[0].values[0];
         }
