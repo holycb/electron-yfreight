@@ -146,10 +146,19 @@
     document.addEventListener('DOMContentLoaded', function() {
       var elems = document.querySelectorAll('.tooltipped');
       var instances = M.Tooltip.init(elems);
+      var fnf = document.getElementById("car-input-consumption");
+        fnf.addEventListener('keyup', function(evt){
+        var n = parseFloat(this.value.replace(/\D/g,''));
+        if (n.toLocaleString() === 'не число')
+          fnf.value = ''
+        else
+          fnf.value = n.toLocaleString();
+      }, false);
     });
     window.onbeforeunload = function(e) {
       dbhelper.dbClose();
     };
+    
   </script>
 </html>
 
