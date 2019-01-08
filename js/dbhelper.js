@@ -56,7 +56,7 @@ module.exports = {
         else return false;
     },
 
-    // returns value like: [ [id1, routeid, x1, y1], [id2, routeid, x2, y2] ]
+    // returns value like: [ [id1, routeid, x1, y1, place1], [id2, routeid, x2, y2, place2] ]
     getRoutePoints: function(routeId){
         var res = database.exec("SELECT * FROM `points` WHERE `route_id` = " + routeId + ";");
         if(res.length != 0){
@@ -71,7 +71,7 @@ module.exports = {
         database.run("DELETE FROM `points` WHERE `route_id` = \'" + routeId + "\';");
         query = "INSERT INTO `points` (`route_id`, `place`, `x`, `y`) VALUES ";
         for(i = 0; i<points.length; i++){
-            str = "( " + routeId + ", " + (i+1) + ", \'" + points[i][1] + "\', \'" + points[i][2] + "\')";
+            str = "( " + routeId + ", " + (i+1) + ", \'" + points[i][0] + "\', \'" + points[i][1] + "\')";
             if(i == points.length-1){
                 str = str + ";";
             }
