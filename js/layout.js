@@ -1,6 +1,7 @@
 var sidebar;
 var currentLayout;
 var mapContainer;
+var calcRoute = require('./js/utils.js');
 
 function initMap() {
   mapContainer = document.createElement('div', { id: 'map' });
@@ -283,23 +284,28 @@ function updateCurrentTable() {
 
 function getCarsLayout() {
   const columns = [
-    { text: '', width: '45px' },
-    { text: 'Название', width: '200px' },
-    { text: 'Номер', width: '45px' },
-    { text: 'Потребление (л.)'}
+    { text: ''},
+    { text: 'Название'},
+    { text: 'Номер'},
+    { text: 'Потребление (л.)'},
+    { text: 'Для текущего маршрута (л.)'},
+    { text: 'Цена'}
   ];
   const data = dbhelper.getAllCars();
+  data.forEach((row) => {
+    let fuel;
+    if (multiRoute.getActiveRoute())
+      fuel = calcRoute.calculateFuelForRoute(multiRoute.getActiveRoute().model.properties.get("distance").value, row[3]);
+    else fuel = 0;
+    row.push(fuel);
+    row.push(calcRoute.calculateFuelCostForRoute(fuel));
+  });
   let tableContainer;
   if (data.length > 0) {
     tableContainer = document.createElement('div');
     const table = createTable(columns, data, {
-      icons: ['edit', 'delete'],
+      icons: ['delete'],
       eventFunctions: [
-        function(el) {
-          //edit
-          const tableRow = el.target.parentNode.parentElement.parentElement;
-          
-        },
         function(el) {
           //delete
           const tableRow = el.target.parentNode.parentElement.parentElement;
@@ -311,15 +317,15 @@ function getCarsLayout() {
       ]
     });
     tableContainer.innerHTML = `
-    <a
-      class="waves-effect btn-flat tooltipped"
-      data-position="left"
-      data-tooltip="Добавить новое транспортное средство"
-      id="side-bar-add-car-button"
-    >
-      <i class="material-icons">add</i>
-    </a>
-              `
+      <a
+        class="waves-effect btn-flat tooltipped modal-trigger"
+        href="#modal2"
+        data-position="left"
+        data-tooltip="Добавить новое транспортное средство"
+        id="side-bar-add-car-button"
+      >
+        <i class="material-icons">add</i>
+      </a>`;
     tableContainer.append(table);
   } else {
     tableContainer = noTableElementsDiv('транспортных средств');
@@ -446,9 +452,9 @@ function modalSaveEvent() {
     ) {
       document.querySelector('#name-inline').className = 'validate invalid';
     } else {
-      dbhelper.insertRoute([route.name, route.note]);
+      const id = dbhelper.insertRoute([route.name, route.note])[0];
       if (route.coords.length > 0)
-        dbhelper.saveRoutePoints(route.name, route.coords);
+        dbhelper.saveRoutePoints(id, route.coords);
       document.getElementById('name-inline').value = '';
       document.getElementById('route-note').value = '';
       document.querySelector('#side-bar-save-button').modalInstance.close();
@@ -497,4 +503,21 @@ function openModalForSavePoint() {
   document.getElementById('name-inline').removeAttribute('disabled');
   document.getElementById('name-input-label').innerText = 'Название';
   document.querySelector('#side-bar-save-button').modalInstance.open();
+}
+
+function modalSaveCar() {
+  const car = {
+    number: document.getElementById('car-input-number').value,
+    consumption: document.getElementById('car-input-consumption').value,
+    name: document.getElementById('car-input-name').value
+  };
+  dbhelper.insertCar([car.name, car.number, car.consumption]);
+
+  document.getElementById('car-input-number').value = '';
+  document.getElementById('car-input-consumption').value = '';
+  document.getElementById('car-input-name').value = '';
+  document.getElementById('modal2').modalInstance.close();
+  M.toast({ html: 'Транспортное средство сохранено!', classes: 'rounded' });
+  updateCurrentTable();
+  
 }

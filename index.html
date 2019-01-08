@@ -15,6 +15,7 @@
     <script src="js/map.js"></script>
     <script src="js/layout.js"></script>
     <script src="js/dbhelper.js"></script>
+    <script src="js/utils.js"></script>
 
     <script src="js/tsp/GA.js"></script>
     <script src="js/tsp/tsp_solver.js"></script>
@@ -126,6 +127,7 @@
       var instances = M.Modal.init(elems);
       document.querySelector('#side-bar-save-button').modalInstance =
         instances[0];
+      document.querySelector('#modal2').modalInstance = instances[1];
     });
     document
       .querySelector('#side-bar-save-button')
@@ -175,7 +177,6 @@
               id="name-inline"
               type="text"
               class="validate"
-              data-length="10"
             />
             <label for="name-inline" id="name-input-label">Название</label>
             <span
@@ -191,6 +192,69 @@
         <div class="input-field col s12">
           <textarea id="route-note" class="materialize-textarea"></textarea>
           <label for="route-note">Описание</label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button
+          class="btn waves-effect waves-light"
+          type="submit"
+          name="action"
+        >
+          Сохранить
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="modal2" class="modal">
+  <div class="modal-content">
+    <h4 id="modal2-name">Добавление нового транспортного средства</h4>
+    <form action="javascript:void(0); modalSaveCar();" class="col s12">
+      <div class="row">
+        <div class="col s6">
+          <div class="input-field inline">
+            <input
+              id="car-input-number"
+              type="text"
+              class="validate"
+              data-length="10"
+            />
+            <label for="car-input-number" id="car-label-number">Номер</label>
+            <span
+              class="helper-text"
+              id="car-input-number-label"
+              data-error="Номер уже существует в базе"
+              data-success=""
+            ></span>
+          </div>
+        </div>
+        <div class="col s6">
+          <div class="input-field inline">
+            <input
+              id="car-input-consumption"
+              type="text"
+              class="validate"
+              data-length="5"
+            />
+            <label for="car-input-consumption" id="car-label-consumption">Потребление (л.)</label>
+            <span
+              class="helper-text"
+              id="car-input-consumption-label"
+              data-error="Неверный формат"
+              data-success=""
+            ></span>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s12">
+          <input
+            id="car-input-name"
+            type="text"
+            class="validate"
+          />
+          <label for="car-input-name" id="car-label-name">Название</label>
         </div>
       </div>
       <div class="modal-footer">
