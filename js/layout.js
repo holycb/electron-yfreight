@@ -30,21 +30,28 @@ function initButtons() {
         var newLayout;
         switch (layout) {
           case 'routes':
+            document.querySelector('.side-layout').style.width = '0px';
+            document.querySelector('.main-layout').style.width = '100%';
             newLayout = getRoutesLayout();
             break;
           case 'points':
+            document.querySelector('.side-layout').style.width = '0px';
+            document.querySelector('.main-layout').style.width = '100%';
             newLayout = getPointsLayout();
             break;
           case 'cars':
             newLayout = getCarsLayout();
             break;
           case 'map':
+            document.querySelector('.side-layout').style.width = '300px';
+            document.querySelector('.main-layout').style.width =
+              'calc(100% - 300px)';
             newLayout = getMapLayout();
             break;
           default:
             console.log('Wrong layout');
             return;
-          }
+        }
         currentLayout = layout;
         layoutContainer.appendChild(newLayout);
       }
@@ -54,15 +61,26 @@ function initButtons() {
 
 function getRoutesLayout() {
   const columns = [
-    {text: '№', width: '30px'},
-    {text: 'Название'},
-    {text: 'Описание'}];
+    { text: '', width: '45px' },
+    { text: 'Название' },
+    { text: 'Описание' }
+  ];
   const data = dbhelper.getAllRoutes();
   let tableContainer;
   if (data.length > 0) {
     tableContainer = document.createElement('div');
-    const table = createTable(columns, data);
-    tableContainer.append(table); 
+    const table = createTable(columns, data, {
+      icons: ['edit', 'delete'],
+      eventFunctions: [
+        function(el) {
+          //delete
+        },
+        function(el) {
+          //delete
+        }
+      ]
+    });
+    tableContainer.append(table);
   } else {
     tableContainer = noTableElementsDiv('маршрутов');
   }
@@ -83,54 +101,49 @@ function noTableElementsDiv(elemNames) {
   return tableContainer;
 }
 
+/**
+ *
+ * @param {string[]} columns
+ * @param {string[][]} data
+ * @param {icons[], eventFunctions[]} rowEventObject
+ */
 function createTable(columns, data, rowEventObject) {
   const table = document.createElement('table');
-  table.className = 'highlight noselect';
+  table.className = 'highlight noselect centered';
 
   const tableHead = document.createElement('thead');
   const trHead = document.createElement('tr');
   trHead.className = 'noselect';
 
-  if (rowEventObject) {
-    const buttonTh = document.createElement('th');
-    buttonTh.style.width = '15%';
-    trHead.appendChild(buttonTh);
-  
-  }
-  columns.forEach((col) => {
+  columns.forEach(col => {
     const newTh = document.createElement('th');
     newTh.innerText = col.text;
     newTh.style.width = col.width || '';
     trHead.appendChild(newTh);
   });
+  if (rowEventObject) {
+    const buttonTh = document.createElement('th');
+    buttonTh.style.width = '15%';
+    trHead.appendChild(buttonTh);
+  }
   tableHead.appendChild(trHead);
   table.append(tableHead);
 
   const tableBody = document.createElement('tbody');
 
   let rowCount = 0;
-  data.forEach((row) => {
+  data.forEach(row => {
     rowCount = rowCount + 1;
     const tr = document.createElement('tr');
     tr.className = '';
 
-    if (rowEventObject) {
-      const newButtons = createRowButtons(rowEventObject);
-      const td = document.createElement('td');
-      newButtons.forEach((button) => {
-        td.appendChild(button);
-      });
-      tr.appendChild(td);
-    }
-    
     let colCount = 0;
     tr.dataset.id = row[0];
-    row.forEach((element) => {
-      
+    row.forEach(element => {
       const td = document.createElement('td');
-      
+
       if (colCount === 0) {
-        td.innerText = colCount+1;
+        td.innerText = rowCount;
       } else {
         td.innerText = element;
       }
@@ -138,21 +151,29 @@ function createTable(columns, data, rowEventObject) {
       tr.appendChild(td);
       colCount = colCount + 1;
     });
+    if (rowEventObject) {
+      const newButtons = createRowButtons(rowEventObject);
+      const td = document.createElement('td');
+      newButtons.forEach(button => {
+        td.appendChild(button);
+      });
+      tr.appendChild(td);
+    }
     tableBody.append(tr);
   });
   table.append(tableBody);
   return table;
 }
 /**
- * 
- * @param {icons: [], eventFunctions: function[]} rowEventObject 
+ *
+ * @param {icons: [], eventFunctions: function[]} rowEventObject
  * @returns the button element
  */
 function createRowButtons(rowEventObject) {
   const buttons = [];
   for (let idx = 0; idx < rowEventObject.icons.length; idx++) {
     const button = document.createElement('a');
-    button.className = 'btn-floating btn-small waves-effect waves-light';
+    button.className = 'waves-effect btn-flat table-button';
     button.style.margin = '5px';
     const i = document.createElement('i');
     i.className = 'material-icons';
@@ -166,70 +187,110 @@ function createRowButtons(rowEventObject) {
 
 function getPointsLayout() {
   const columns = [
-    {text: '№', width: '30px'},
-    {text: 'Название'},
-    {text: 'Описание'}];
+    { text: '', width: '45px' },
+    { text: 'Название' },
+    { text: 'Описание' }
+  ];
   const data = dbhelper.getNotePoints();
   let tableContainer;
   if (data.length > 0) {
     tableContainer = document.createElement('div');
-    const table = createTable(columns, data);
-    tableContainer.append(table); 
+    const table = createTable(columns, data, {
+      icons: ['edit', 'delete'],
+      eventFunctions: [
+        function(el) {
+          //delete
+        },
+        function(el) {
+          //delete
+        }
+      ]
+    });
+    tableContainer.append(table);
   } else {
     tableContainer = noTableElementsDiv('пунктов');
   }
   return tableContainer;
 }
 
-function getCarsLayout() {
-
-}
+function getCarsLayout() {}
 
 function getMapLayout() {
   return mapContainer;
 }
 
-
-
 function updateSideLayout(pointsList) {
   const LIST_ITEM_CLASS = 'collection-item noselect';
 
-  let sideList = document.querySelector('#side-list');
+  //  sideList = document.querySelector('#side-list');
+  document.querySelector('#side-list').innerHTML = '';
+  let sideList = document.createElement('ul');
+  sideList.className = 'collection';
 
   if (pointsList.length > 0) {
-    sideList.className = 'collection'; 
-    // if (pointsList.length > 1) {
-    //   document
-    //   .querySelector('#side-bar-best-way-button').classList.push('disabled');
-    // }
-  } 
-  else sideList.className = '';
-
-  while (sideList.lastChild) {
-    sideList.removeChild(sideList.firstChild);
-  }
-
-  iter = 0;
-  for (i of pointsList) {
-    let newListItem = document.createElement('a');
-    newListItem.className = LIST_ITEM_CLASS;
-    newListItem.innerText = i;
-    newListItem.dataset.index = iter;
     if (currentLayout === 'map') {
-      const badgeSpan = document.createElement('a');
-      badgeSpan.className = 'secondary-content';
-      badgeSpan.innerHTML = '<i class="material-icons">close</i>';
-      badgeSpan.addEventListener('click', el => {
-        const newCoordsNumbers = [...Array(getCoordPoints().length).keys()];
-        newCoordsNumbers.splice(el.currentTarget.parentElement.dataset.index, 1);
-        setNewWay(newCoordsNumbers);
-      });
-      newListItem.appendChild(badgeSpan);
-      iter++;
+      const className = document.querySelector('#side-bar-save-button')
+        .className;
+      document.querySelector(
+        '#side-bar-save-button'
+      ).className = className.replace('disabled', '');
     }
 
-    sideList.appendChild(newListItem);
+    iter = 0;
+    for (i of pointsList) {
+      let newListItem = document.createElement('li');
+      newListItem.className = LIST_ITEM_CLASS;
+      newListItem.innerText = i;
+      newListItem.dataset.index = iter;
+      if (currentLayout === 'map') {
+        const badgeSpan = document.createElement('a');
+        badgeSpan.className = 'secondary-content';
+        badgeSpan.innerHTML = '<i class="material-icons">close</i>';
+        badgeSpan.addEventListener('click', el => {
+          const newCoordsNumbers = [...Array(getCoordPoints().length).keys()];
+          const names = getNamePoints();
+          newCoordsNumbers.splice(
+            el.currentTarget.parentElement.dataset.index,
+            1
+          );
+          setNewWay(newCoordsNumbers);
+          setSpinner();
+          const interval = setInterval(() => {
+            clearInterval(interval);
+            removeSpinner();
+          }, 700);
+          M.toast({
+            html: `${
+              names[el.currentTarget.parentElement.dataset.index]
+            } - удалено из текущего маршрута`,
+            classes: 'rounded'
+          });
+        });
+        newListItem.appendChild(badgeSpan);
+        iter++;
+      }
+      sideList.appendChild(newListItem);
+    }
+  } else {
+    sideList = document.createElement('div');
+    sideList.className = 'center-align';
+    const i = document.createElement('i');
+    i.className = 'material-icons center-align noselect';
+    i.innerText = 'more_horiz';
+    i.addEventListener('click', () => {
+      if (currentLayout === 'map') {
+        M.toast({ html: 'Маршрут не выбран!', classes: 'rounded' });
+        const className = document.querySelector('#side-bar-save-button')
+          .className;
+        if (!className.includes('disabled'))
+          document.querySelector('#side-bar-save-button').className =
+            className + 'disabled';
+      }
+    });
+    sideList.appendChild(i);
   }
+
+  document.querySelector('#side-list').appendChild(sideList);
 }
 
 function initSideNav() {
@@ -242,6 +303,7 @@ function initSideNav() {
 function initialLayout() {
   initMap();
   currentLayout = 'map';
+  updateSideLayout([]);
 }
 
 function setSpinner() {
@@ -255,21 +317,29 @@ function removeSpinner() {
 }
 
 function modalSaveEvent() {
-  if (document.querySelector('#side-bar-save-button').modalInstance.mode === 'route') {
+  if (
+    document.querySelector('#side-bar-save-button').modalInstance.mode ===
+    'route'
+  ) {
     const route = {
       name: document.getElementById('name-inline').value,
       note: document.getElementById('route-note').value,
       coords: getCoordPoints()
     };
-    if (dbhelper.isRouteNameExists(route.name) || !route.name || route.name === '') {
-      document.querySelector('#name-inline').className =  'validate invalid';
+    if (
+      dbhelper.isRouteNameExists(route.name) ||
+      !route.name ||
+      route.name === ''
+    ) {
+      document.querySelector('#name-inline').className = 'validate invalid';
     } else {
       dbhelper.insertRoute([route.name, route.note]);
       if (route.coords.length > 0)
         dbhelper.saveRoutePoints(route.name, route.coords);
       document.getElementById('name-inline').value = '';
       document.getElementById('route-note').value = '';
-      document.querySelector('#side-bar-save-button').modalInstance.close();  
+      document.querySelector('#side-bar-save-button').modalInstance.close();
+      M.toast({ html: 'Маршрут сохранен!', classes: 'rounded' });
       setNewWay([]);
     }
   } else {
@@ -278,12 +348,18 @@ function modalSaveEvent() {
       note: document.getElementById('route-note').value,
       coords: lastPointedCoords
     };
-    dbhelper.insertNotePoint([point.name, point.coords[0], point.coords[1], point.note]);
+    dbhelper.insertNotePoint([
+      point.name,
+      point.coords[0],
+      point.coords[1],
+      point.note
+    ]);
     document.getElementById('name-inline').value = '';
     document.getElementById('route-note').value = '';
     document.querySelector('#side-bar-save-button').modalInstance.close();
+    M.toast({ html: 'Точка на карте сохранена!', classes: 'rounded' });
+    saveNewPointOnMap(point);
   }
-
 }
 
 function openModalForSavePoint() {

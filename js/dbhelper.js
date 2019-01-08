@@ -114,7 +114,7 @@ module.exports = {
 
     // returns value like: [ {id: 1, name: "name1", note: "notice1", coords: [x1, y1]},
     // {id: 2, name: "name2", note: "notice2", coords: [x2, y2]} ]
-    getNotePointsForMap: function(routeId){
+    getNotePointsForMap: function(){
         var res = database.exec("SELECT * FROM `note_points`;");
         if(res.length != 0){
             var values = res[0].values;

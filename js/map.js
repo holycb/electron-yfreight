@@ -31,11 +31,32 @@ function init() {
   var createNoteButton = new ymaps.control.Button({
     data: { content: 'Отметить точку на карте' }
   });
-  
+  var showPlacemaks = new ymaps.control.Button({
+    data: { content: 'Отображать отмеченные точки' },
+    state: { selected: true }
+  });
+
+  showPlacemaks.events.add('select', () => {
+    setAllPoints();
+  });
+  showPlacemaks.events.add('deselect', () => {
+    const routeWasEditing = createRouteButton.isSelected();
+
+    myMap.geoObjects.removeAll();
+    myMap.geoObjects.add(multiRoute);
+    if (routeWasEditing) {
+      multiRoute.editor.start({
+        addWayPoints: true,
+        removeWayPoints: true
+      });
+    }
+  });
+
   let cursor;
   createNoteButton.events.add('select', () => {
-    cursor = myMap.cursors.push('crosshair')
-    myMap.events.once('click', function (e) {
+    cursor = myMap.cursors.push('crosshair');
+    createRouteButton.deselect();
+    myMap.events.once('click', function(e) {
       lastPointedCoords = e.get('coords');
       cursor.remove();
       openModalForSavePoint();
@@ -43,12 +64,12 @@ function init() {
     });
   });
   createNoteButton.events.add('deselect', () => {
-    if (cursor) 
-      cursor.remove();
+    if (cursor) cursor.remove();
     myMap.events.remove('click');
   });
 
   createRouteButton.events.add('select', () => {
+    createNoteButton.deselect();
     multiRoute.editor.start({
       addWayPoints: true,
       removeWayPoints: true
@@ -76,14 +97,43 @@ function init() {
         ]
       },
       {
-        buttonMaxWidth: 300
+        buttonMaxWidth: 300,
+        suppressMapOpenBlock: true
       }
     );
-
+    myMap.controls.add(showPlacemaks, {
+      float: 'none',
+      position: { bottom: 10, left: 10 }
+    });
+    setAllPoints();
     myMap.geoObjects.add(multiRoute);
 
     initNewRoute();
   });
+}
+
+function setAllPoints() {
+  const points = dbhelper.getNotePointsForMap();
+  points.forEach(val => {
+    if (val.coords && val.coords.length > 0) {
+      saveNewPointOnMap(val);
+    }
+  });
+}
+function saveNewPointOnMap(val) {
+  myMap.geoObjects.add(
+    new ymaps.Placemark(
+      val.coords,
+      {
+        balloonContent: val.note,
+        iconCaption: val.name
+      },
+      {
+        preset: 'islands#blueCircleDotIconWithCaption',
+        iconCaptionMaxWidth: '70'
+      }
+    )
+  );
 }
 
 function initNewRoute() {

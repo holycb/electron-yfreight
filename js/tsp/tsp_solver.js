@@ -71,6 +71,7 @@ function findBestWay(wayPoints, wayDistances, setWayFunc) {
       clearInterval(interval);
       setNewWay(solution);
       removeSpinner();
+      M.toast({ html: 'Кратчайший маршрут построен!', classes: 'rounded' });
     }
   }, 10);
 }
