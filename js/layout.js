@@ -75,7 +75,7 @@ function getRoutesLayout() {
         function(el) {
           //show
           const tableRow = el.target.parentNode.parentElement.parentElement;
-          const route = dbhelper.getRoutePoints().map((x) => {[x[2], x[3]]});
+          const route = dbhelper.getRoutePoints(tableRow.dataset.id).map((x) => {[x[2], x[3]]});
           // returns value like: [ [id1, routeid, x1, y1], [id2, routeid, x2, y2] ]
           // getRoutePoints: function(routeId){
           var toastHTML = `<span>${tableRow.children[1].textContent} - открыт</span>`;
