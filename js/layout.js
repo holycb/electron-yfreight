@@ -86,6 +86,7 @@ function getRoutesLayout() {
           var toastHTML = `<span>${tableRow.children[1].textContent} - открыт</span>`;
           M.toast({html: toastHTML});
           openMapLayoutWithRoute(route);
+          createRouteButton.select();
         },
         function(el) {
           //delete
@@ -512,7 +513,10 @@ function modalSaveCar() {
     name: document.getElementById('car-input-name').value
   };
   dbhelper.insertCar([car.name, car.number, car.consumption]);
-
+  if (!car.consumption && consumption === '') {
+    document.getElementById('car-input-consumption').className = 'validate invalid';
+    return;
+  }
   document.getElementById('car-input-number').value = '';
   document.getElementById('car-input-consumption').value = '';
   document.getElementById('car-input-name').value = '';
