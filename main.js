@@ -13,6 +13,7 @@ function createWindow() {
     minWidth: 930,
     minHeight: 400
   });
+  win.setMenu(null);
   win.loadFile('index.html');
   win.on('closed', () => {
     app.quit();
