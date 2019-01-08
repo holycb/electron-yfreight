@@ -80,7 +80,7 @@ function getRoutesLayout() {
         function(el) {
           //show
           const tableRow = el.target.parentNode.parentElement.parentElement;
-          const route = dbhelper.getRoutePoints(tableRow.dataset.id).map((x) => {[x[2], x[3]]});
+          const route = dbhelper.getRoutePoints(tableRow.dataset.id).map((x) => [x[2], x[3]]);
           // returns value like: [ [id1, routeid, x1, y1], [id2, routeid, x2, y2] ]
           // getRoutePoints: function(routeId){
           var toastHTML = `<span>${tableRow.children[1].textContent} - открыт</span>`;
@@ -115,7 +115,7 @@ function openMapLayoutWithRoute(route) {
   document.querySelector('.main-layout').style.width =
     'calc(100% - 300px)';
   layoutContainer.appendChild(getMapLayout());
-  setNewCoords(coords);
+  setNewCoords(route);
 }
 
 function noTableElementsDiv(elemNames) {
@@ -295,10 +295,10 @@ function getCarsLayout() {
   data.forEach((row) => {
     let fuel;
     if (multiRoute.getActiveRoute())
-      fuel = calcRoute.calculateFuelForRoute(multiRoute.getActiveRoute().model.properties.get("distance").value, row[3]);
+      fuel = calcRoute.calculateFuelForRoute(multiRoute.getActiveRoute().model.properties.get("distance").value, row[3]).toFixed(2);
     else fuel = 0;
     row.push(fuel);
-    row.push(calcRoute.calculateFuelCostForRoute(fuel));
+    row.push(calcRoute.calculateFuelCostForRoute(fuel).toFixed(2));
   });
   let tableContainer;
   if (data.length > 0) {
