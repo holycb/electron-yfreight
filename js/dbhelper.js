@@ -19,7 +19,7 @@ module.exports = {
             // insertCar(["Mazda Demio", "H908CB", 6.5]);
             // insertCar(["UAZ Patriot", "T131KM", 13.0]);
             // saveDatabase();
-            // test();
+            test();
             // log.debug(getAllRoutes());
         }
     },
@@ -35,8 +35,14 @@ module.exports = {
     },
 
     //data example: [ name, notice ]
+    //return example: [ id, "name", "notice" ]
     insertRoute: function(route){
         database.run("INSERT INTO `routes` (`name`, `notice`) VALUES (\'" + route[0] + "\', \'" + route[1] + "\');");
+        database.exec("SELECT * FROM `routes` ORDER BY `id` DESC LIMIT 1;");
+        if(res.length != 0){
+            return res[0].values[0];
+        }
+        else return [];
     },
 
     //data example: [ id, notice ]
@@ -68,7 +74,7 @@ module.exports = {
         database.run("DELETE FROM `points` WHERE `route_id` = \'" + routeId + "\';");
         query = "INSERT INTO `points` (`route_id`, `place`, `x`, `y`) VALUES ";
         for(i = 0; i<points.length; i++){
-            str = "( " + points[i][0] + ", " + (i+1) + ", \'" + points[i][1] + "\', \'" + points[i][2] + "\')";
+            str = "( " + routeId + ", " + (i+1) + ", \'" + points[i][1] + "\', \'" + points[i][2] + "\')";
             if(i == points.length-1){
                 str = str + ";";
             }
@@ -96,7 +102,7 @@ module.exports = {
     //date format [id, notice]
     //example [5, "This is notice"]
     setNotePointNotice: function(pointData){
-        database.run("UPDATE `note_points` SET `notice`=\'" + pointData[1] + "\' WHERE `id` = " + pointData[0] + ";");
+        database.run("UPDATE `note_points` SET `notice`= \'" + pointData[1] + "\' WHERE `id` = " + pointData[0] + ";");
     },
     
     //date format [name, x, y, notice]
@@ -185,9 +191,9 @@ function saveDatabase(){
 
 //date format [name, plate, consumption]
     //example ["Niva", "X967HP", 10.5]
-function insertCar(car){
-    database.run("INSERT INTO `cars` (`name`, `plate`, `consumption`) VALUES (\'" + car[0] + "\', \'" + car[1] + "\', \'" + car[2] + "\');");
-}
+// function insertCar(car){
+//     database.run("INSERT INTO `cars` (`name`, `plate`, `consumption`) VALUES (\'" + car[0] + "\', \'" + car[1] + "\', \'" + car[2] + "\');");
+// }
 
 function createNewDatabase(){
     
