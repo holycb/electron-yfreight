@@ -63,8 +63,13 @@ td {
 .ellipsis { text-overflow: ellipsis; }
 
 #side-bar-button, #side-bar-best-way-button, #side-bar-save-button,
-#side-bar-clear-button {
+#side-bar-clear-button, #side-bar-add-car-button {
   margin-top: 8.3px;
   border-radius: 30px;
   z-index: 1001;
+}
+#side-bar-add-car-button {
+  position: absolute;
+  top: 0;
+  right: 37.5px;
 }

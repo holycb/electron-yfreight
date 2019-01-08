@@ -40,7 +40,11 @@ function initButtons() {
             newLayout = getPointsLayout();
             break;
           case 'cars':
+            document.querySelector('.side-layout').style.width = '0px';
+            document.querySelector('.main-layout').style.width = '100%';
             newLayout = getCarsLayout();
+            var elems = newLayout.querySelector('#side-bar-add-car-button');
+            var instances = M.Tooltip.init(elems);
             break;
           case 'map':
             document.querySelector('.side-layout').style.width = '300px';
@@ -231,8 +235,8 @@ function getPointsLayout() {
           document.getElementById('name-input-label').innerText = tableRow.children[1].textContent;
           document.querySelector('#side-bar-save-button').modalInstance.mode = 'point-edit';
           document.getElementById('modal-name').innerText = 'Изменение заметки для точки на карте';
+          document.querySelector('#side-bar-save-button').modalInstance.currentId = tableRow.dataset.id;
           document.querySelector('#side-bar-save-button').modalInstance.open();
-          updateCurrentTable();
         },
         function(el) {
           //delete
@@ -277,7 +281,51 @@ function updateCurrentTable() {
     layoutContainer.appendChild(newLayout);
 }
 
-function getCarsLayout() {}
+function getCarsLayout() {
+  const columns = [
+    { text: '', width: '45px' },
+    { text: 'Название', width: '200px' },
+    { text: 'Номер', width: '45px' },
+    { text: 'Потребление (л.)'}
+  ];
+  const data = dbhelper.getAllCars();
+  let tableContainer;
+  if (data.length > 0) {
+    tableContainer = document.createElement('div');
+    const table = createTable(columns, data, {
+      icons: ['edit', 'delete'],
+      eventFunctions: [
+        function(el) {
+          //edit
+          const tableRow = el.target.parentNode.parentElement.parentElement;
+          
+        },
+        function(el) {
+          //delete
+          const tableRow = el.target.parentNode.parentElement.parentElement;
+          var toastHTML = `<span>${tableRow.children[1].textContent} - удалена</span>`;
+          M.toast({html: toastHTML});
+          dbhelper.deleteCar(tableRow.dataset.id);
+          tableRow.remove();
+        }
+      ]
+    });
+    tableContainer.innerHTML = `
+    <a
+      class="waves-effect btn-flat tooltipped"
+      data-position="left"
+      data-tooltip="Добавить новое транспортное средство"
+      id="side-bar-add-car-button"
+    >
+      <i class="material-icons">add</i>
+    </a>
+              `
+    tableContainer.append(table);
+  } else {
+    tableContainer = noTableElementsDiv('транспортных средств');
+  }
+  return tableContainer;
+}
 
 function getMapLayout() {
   updateMap();
@@ -431,20 +479,22 @@ function modalSaveEvent() {
       note: document.getElementById('route-note').value
     };
     dbhelper.setNotePointNotice([
-      point.name,
+      document.querySelector('#side-bar-save-button').modalInstance.currentId,
       point.note
     ]);
-    document.getElementById('name-inline').setAttribute('disabled', '');
+    document.getElementById('name-inline').removeAttribute('disabled');
     document.getElementById('name-inline').value = '';
     document.getElementById('route-note').value = '';
     document.querySelector('#side-bar-save-button').modalInstance.close();
-    M.toast({ html: `${poont.name} успешно изменена`, classes: 'rounded' });
+    M.toast({ html: `Заметка успешно изменена`, classes: 'rounded' });
+    updateCurrentTable();
   }
 }
 
 function openModalForSavePoint() {
   document.querySelector('#side-bar-save-button').modalInstance.mode = 'point';
   document.getElementById('modal-name').innerText = 'Сохранение точки на карте';
+  document.getElementById('name-inline').removeAttribute('disabled');
   document.getElementById('name-input-label').innerText = 'Название';
   document.querySelector('#side-bar-save-button').modalInstance.open();
 }
