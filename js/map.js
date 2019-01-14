@@ -14,7 +14,8 @@ function init() {
     {
       referencePoints: [],
       params: {
-        reverseGeocoding: true
+        reverseGeocoding: true,
+        avoidTrafficJams: true
       }
     },
     {
@@ -203,7 +204,8 @@ function setNewWay(pointNumbers) {
     {
       referencePoints: pointNumbers.map(x => points[x]),
       params: {
-        reverseGeocoding: true
+        reverseGeocoding: true,
+        avoidTrafficJams: true
       }
     },
     {
@@ -226,7 +228,8 @@ function setNewCoords(coords) {
     {
       referencePoints: coords,
       params: {
-        reverseGeocoding: true
+        reverseGeocoding: true,
+        avoidTrafficJams: true
       }
     },
     {
